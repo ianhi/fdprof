@@ -46,6 +46,8 @@ uv run ruff format src/ tests/
 uv run pre-commit run --all-files
 ```
 
+**Note**: Linting and formatting are handled locally during development. On GitHub, the pre-commit bot automatically handles linting checks for pull requests, so CI focuses only on functionality testing.
+
 ### Building and Installing
 ```bash
 # Build distribution
