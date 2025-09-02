@@ -43,9 +43,9 @@ def detect_plateaus(
 
         # Extend region while values are similar to recent mean
         while j < len(values):
-            # Use a sliding window mean for comparison
-            recent_vals = region_vals[-min(5, len(region_vals)) :]
-            recent_mean = np.mean(recent_vals)
+            # Use a sliding window mean for comparison (more efficient)
+            window_size = min(5, len(region_vals))
+            recent_mean = np.mean(region_vals[-window_size:])
 
             if abs(values[j] - recent_mean) <= tolerance:
                 region_vals.append(values[j])

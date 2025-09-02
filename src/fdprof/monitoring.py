@@ -32,7 +32,12 @@ def capture_output_and_monitor_fds(
                         fd_count = psutil_proc.num_fds()
                     except AttributeError:
                         # Fall back to len(open_files()) on Windows
-                        fd_count = len(psutil_proc.open_files())
+                        try:
+                            fd_count = len(psutil_proc.open_files())
+                        except (psutil.AccessDenied, psutil.NoSuchProcess):
+                            fd_count = -1
+                    except (psutil.AccessDenied, psutil.NoSuchProcess):
+                        fd_count = -1
                 else:
                     fd_count = -1
 
