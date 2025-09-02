@@ -109,7 +109,12 @@ fdprof --plot gunicorn app:app
 
 # Profile a database migration
 fdprof --plot python manage.py migrate
+
+# Quick event logging test
+fdprof --plot bash -c 'echo "EVENT: $(date +%s.%N) Start"; sleep 1; echo "EVENT: $(date +%s.%N) End"'
 ```
+
+**💡 Tip**: Add event logging to your applications (see [Event Logging](#-event-logging)) to get meaningful plots with context markers showing what happened when.
 
 ## 🧪 Built-in Demo
 
@@ -196,6 +201,36 @@ The generated images show:
 
 ## 🎯 Event Logging
 
+**Event logging is essential for meaningful analysis** - without events, you'll only see FD usage curves. Events appear as colored vertical lines on plots and provide context for understanding when changes occur.
+
+### Event Format Requirements
+
+Events must be printed to **stdout** (not stderr) in this exact format:
+
+```
+EVENT: <timestamp> <message>
+```
+
+**Format details:**
+- Must start with `EVENT: ` (including the space)
+- Timestamp must be a decimal number (seconds since epoch)
+- Message can be any descriptive text
+- Each event must be on its own line
+- Events are captured in real-time during command execution
+
+### Why Events Matter
+
+**Without events:**
+- You see FD usage over time but don't know what caused changes
+- Plot shows curves and plateaus without context
+- Hard to correlate FD changes with application behavior
+
+**With events:**
+- Colored vertical lines mark important moments
+- Event messages explain what happened when
+- Easy to see cause-and-effect relationships
+- Timeline in console output shows event sequence
+
 Add event logging to your applications to track important milestones:
 
 ### Python Example
@@ -246,6 +281,110 @@ echo "EVENT: $(date +%s.%N) Processing data"
 sleep 2
 
 echo "EVENT: $(date +%s.%N) Script completed"
+```
+
+### Timestamp Generation Methods
+
+**Python:**
+```python
+import time
+timestamp = time.time()  # Returns float with microsecond precision
+print(f"EVENT: {timestamp:.9f} My event message")
+```
+
+**Shell/Bash:**
+```bash
+# High precision (nanoseconds)
+echo "EVENT: $(date +%s.%N) Event message"
+
+# Standard precision (seconds)
+echo "EVENT: $(date +%s) Event message"
+
+# Using Python for precision in shell scripts
+echo "EVENT: $(python3 -c 'import time; print(time.time())') Event message"
+```
+
+**Node.js/JavaScript:**
+```javascript
+console.log(`EVENT: ${Date.now() / 1000} Server started`);
+// or for higher precision:
+console.log(`EVENT: ${process.hrtime.bigint() / 1000000000n} Request handled`);
+```
+
+**Go:**
+```go
+fmt.Printf("EVENT: %f Connection established\n", float64(time.Now().UnixNano())/1e9)
+```
+
+**Rust:**
+```rust
+println!("EVENT: {} Database ready", std::time::SystemTime::now()
+    .duration_since(std::time::UNIX_EPOCH).unwrap().as_secs_f64());
+```
+
+### Event Logging Best Practices
+
+**✅ Good event messages:**
+- `"Database connection established"`
+- `"Configuration loaded"`
+- `"Processing batch 1/10"`
+- `"Cache warmed up"`
+- `"Cleanup started"`
+
+**❌ Avoid these patterns:**
+- Very long messages (they get truncated on plots)
+- Too frequent events (clutters visualization)
+- Events on stderr (won't be captured)
+- Missing timestamps or wrong format
+- Events inside tight loops (performance impact)
+
+### Troubleshooting Event Logging
+
+**Events not appearing on plots?**
+1. Verify format: Must start with `EVENT: ` exactly
+2. Check output stream: Must go to stdout, not stderr
+3. Ensure real-time output: Use `flush=True` in Python
+4. Validate timestamps: Should be decimal seconds since epoch
+
+**Events showing at wrong times?**
+1. Check system clock synchronization
+2. Ensure consistent timestamp source across events
+3. Verify timezone handling (use UTC timestamps if possible)
+
+**Plot too cluttered with events?**
+1. Reduce event frequency - focus on major milestones
+2. Use shorter, more descriptive messages
+3. Group related operations into single events
+
+### Quick Reference
+
+**Minimal event logging setup:**
+
+```python
+# Add this to the top of your Python script
+import time
+def log_event(msg): print(f"EVENT: {time.time():.9f} {msg}", flush=True)
+
+# Then use throughout your application:
+log_event("Starting application")
+# ... your code ...
+log_event("Application ready")
+```
+
+```bash
+# Add this to your shell script
+log_event() { echo "EVENT: $(date +%s.%N) $1"; }
+
+# Then use throughout your script:
+log_event "Script started"
+# ... your code ...
+log_event "Script completed"
+```
+
+**Test your events:**
+```bash
+# Quick test - should show 2 events on plot
+fdprof --plot bash -c 'echo "EVENT: $(date +%s.%N) Test start"; sleep 2; echo "EVENT: $(date +%s.%N) Test end"'
 ```
 
 ## 📊 Understanding the Output
