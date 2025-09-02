@@ -72,7 +72,12 @@ fdprof [OPTIONS] <command> [command_args...]
 | Option | Description | Default |
 |--------|-------------|---------|
 | `--plot` | Show interactive plot after command completes | `False` |
+| `--save FILENAME` | Save plot to file (PNG, PDF, SVG) instead of showing | None |
 | `--interval SECONDS` | Sampling interval in seconds | `0.1` |
+| `--merge-threshold FLOAT` | Merge plateaus within this FD difference | `5.0` |
+| `--min-length INT` | Minimum points for plateau detection | `5` |
+| `--tolerance FLOAT` | Stability tolerance for plateaus | `2.0` |
+| `--jump-threshold FLOAT` | Minimum jump size to display on plot | `2.0` |
 
 ### Quick Examples
 
@@ -131,6 +136,52 @@ The demo script creates a realistic FD usage pattern with:
 6. Closes remaining files → back to baseline
 
 This creates clear plateaus and jumps that demonstrate fdprof's detection capabilities.
+
+### Demo Visualization
+
+![fdprof Demo Output](fdprof_demo.png)
+*Default sensitivity (merge-threshold=5.0): Shows 5 distinct plateaus with clear jump annotations*
+
+The plot shows:
+- **5 distinct plateaus**: Baseline (8 FDs) → Stage 1 (16 FDs) → Stage 2 (22 FDs) → Stage 3 (17 FDs) → Final (9 FDs)
+- **4 labeled jumps**: +8, +6, -5, -8 FDs with red/blue directional arrows
+- **7 event markers**: Timestamped events aligned with plateau transitions
+- **Automatic analysis**: Console output shows detected plateaus and jump timings
+
+## 📸 Generating Images for Documentation
+
+fdprof can save plots directly to files for documentation, presentations, or CI/CD:
+
+```bash
+# Basic demo plot (default sensitivity)
+fdprof --save fdprof_demo.png fdprof-demo
+
+# High sensitivity plot (more detailed plateaus)
+fdprof --save fdprof_high_sensitivity.png --merge-threshold 1.0 --jump-threshold 1.0 fdprof-demo
+
+# Low sensitivity plot (merges small changes)
+fdprof --save fdprof_low_sensitivity.png --merge-threshold 50.0 --jump-threshold 10.0 fdprof-demo
+```
+
+**Supported formats**: PNG, PDF, SVG
+**Features**: 300 DPI, tight bounds, headless-compatible
+
+### Sensitivity Comparison
+
+**High Sensitivity** (merge-threshold=1.0):
+![High Sensitivity](fdprof_high_sensitivity.png)
+*More detailed plateau detection - ideal for microservices*
+
+**Low Sensitivity** (merge-threshold=50.0):
+![Low Sensitivity](fdprof_low_sensitivity.png)
+*Single merged plateau - ideal for large applications with noise*
+
+The generated images show:
+- **Blue line**: FD usage over time with data points
+- **Gray horizontal lines**: Detected stable plateaus
+- **Red/blue arrows**: Jump annotations with size labels (+8, +6, -5, -8)
+- **Colored vertical lines**: Event markers with timestamps
+- **Rotated text**: Event descriptions at timing points
 
 ## 🎯 Event Logging
 
@@ -243,6 +294,30 @@ Detected 6 jumps between plateaus:
   - Event markers (colored vertical lines)
 
 ## 🔧 Advanced Usage
+
+### Sensitivity Parameter Tuning
+
+Different applications require different sensitivity settings for optimal plateau detection:
+
+```bash
+# Demo-scale applications (5-20 FDs, small changes)
+fdprof --plot --merge-threshold 5.0 --jump-threshold 2.0 fdprof-demo
+
+# Micro-services (very sensitive, detect tiny changes)
+fdprof --plot --merge-threshold 1.0 --tolerance 1.0 --jump-threshold 1.0 my-microservice
+
+# Large web applications (100+ FDs, ignore small fluctuations)
+fdprof --plot --merge-threshold 50.0 --min-length 20 --jump-threshold 10.0 gunicorn -w 8 app:app
+
+# Database operations (moderate sensitivity)
+fdprof --plot --merge-threshold 10.0 --jump-threshold 5.0 python manage.py migrate
+```
+
+**Parameter Guide:**
+- `--merge-threshold`: Lower = more sensitive to level differences
+- `--jump-threshold`: Lower = show smaller jumps on plot
+- `--tolerance`: Lower = stricter plateau stability requirements
+- `--min-length`: Higher = require longer stable periods
 
 ### Analyzing Different Application Types
 
