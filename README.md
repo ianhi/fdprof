@@ -456,6 +456,10 @@ make check
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
+## 🙏 Acknowledgments
+
+fdprof was originally developed by [Earthmover](https://earthmover.io/) to profile file descriptor usage in [Icechunk](https://icechunk.io), a new transactional storage engine for scientific data.
+
 ## 🙋 Support
 
 - 📖 **Documentation**: See examples above and `fdprof --help`
