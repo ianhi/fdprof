@@ -457,16 +457,36 @@ This analysis helped identify a file descriptor leak in the logging module!
 # Setup development environment
 git clone https://github.com/ianhi/fdprof
 cd fdprof
-make dev-setup
+uv sync --extra dev --extra test
+
+# Install pre-commit hooks
+uv run pre-commit install
 
 # Run tests
-make test
+uv run pytest tests/ -v
+
+# Run tests with coverage
+uv run pytest tests/ -v --cov=src/fdprof --cov-report=html --cov-report=term
 
 # Run linting
-make lint
+uv run ruff check src/ tests/
 
-# Run all checks
-make check
+# Fix linting issues
+uv run ruff check --fix src/ tests/
+
+# Format code
+uv run ruff format src/ tests/
+
+# Run pre-commit on all files
+uv run pre-commit run --all-files
+
+# Build package
+uv build
+
+# Clean build artifacts
+rm -rf dist/ build/ *.egg-info/ .pytest_cache/ htmlcov/ fdprof.jsonl
+find . -type d -name __pycache__ -exec rm -rf {} +
+find . -type f -name "*.pyc" -delete
 ```
 
 ## 📋 Requirements

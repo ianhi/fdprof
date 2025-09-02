@@ -19,10 +19,10 @@ uv run fdprof --help
 ### Testing
 ```bash
 # Run all tests
-make test
+uv run pytest tests/ -v
 
 # Run with coverage
-make test-cov
+uv run pytest tests/ -v --cov=src/fdprof --cov-report=html --cov-report=term
 
 # Run integration tests only
 uv run pytest tests/test_integration.py -v
@@ -34,16 +34,16 @@ uv run pytest tests/test_events.py::TestEventParsing::test_parse_events_single_e
 ### Code Quality
 ```bash
 # Run linter
-make lint
+uv run ruff check src/ tests/
 
 # Fix linting issues
-make lint-fix
+uv run ruff check --fix src/ tests/
 
 # Format code
-make format
+uv run ruff format src/ tests/
 
-# Run all checks
-make check
+# Run pre-commit checks
+uv run pre-commit run --all-files
 ```
 
 ### Building and Installing
@@ -119,7 +119,7 @@ fdprof/
 2. Write unit tests in `tests/test_<module>.py`
 3. Add integration test if needed
 4. Update documentation
-5. Run `make check` to verify
+5. Run `uv run ruff check src/ tests/ && uv run pytest tests/ -v` to verify
 
 ### Updating Dependencies
 ```bash
@@ -136,7 +136,7 @@ uv sync --upgrade
 ### Release Preparation
 1. Update version in `pyproject.toml` and `__init__.py`
 2. Update `CHANGELOG.md`
-3. Run full test suite: `make check`
+3. Run full test suite: `uv run ruff check src/ tests/ && uv run pytest tests/ -v`
 4. Build and test: `uv build && uvx --from ./dist/... fdprof --help`
 5. Commit and tag
 
