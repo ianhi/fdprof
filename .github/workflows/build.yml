@@ -40,7 +40,7 @@ jobs:
     - name: Test package installation
       run: |
         # Install from wheel in fresh environment
-        uv run --isolated --from dist/*.whl fdprof --help
+        uvx --from dist/*.whl fdprof --help
         # Test basic functionality
         echo "Package installation test passed"
 
@@ -75,6 +75,6 @@ jobs:
     - name: Test wheel installation
       run: |
         # Install from wheel
-        uv run --isolated --from dist/*.whl fdprof --help
+        uvx --from dist/*.whl fdprof --help
         # Basic smoke test
-        timeout 5s uv run --isolated --from dist/*.whl fdprof echo "Build test" || true
+        timeout 5s uvx --from dist/*.whl fdprof echo "Build test" || true
