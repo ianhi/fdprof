@@ -6,6 +6,7 @@ Usage: fdprof [OPTIONS] <command> [args...]
 
 Options:
     --plot                      Show plot after command completes
+    --save FILENAME             Save plot to file instead of showing (supports PNG, PDF, SVG)
     --interval SECONDS          Sampling interval in seconds (default: 0.1)
     --merge-threshold FLOAT     Merge plateaus within this FD difference (default: 5.0)
     --min-length INT           Minimum points for plateau detection (default: 5)
@@ -18,6 +19,9 @@ Examples:
 
     # With plot using demo-sensitive parameters (default)
     fdprof --plot fdprof-demo
+
+    # Save plot to file for documentation
+    fdprof --save fdprof_demo.png fdprof-demo
 
     # High sensitivity for small changes
     fdprof --plot --merge-threshold 2.0 --tolerance 1.0 --jump-threshold 1.0 fdprof-demo
@@ -43,13 +47,14 @@ from .monitoring import capture_output_and_monitor_fds
 from .plotting import create_plot
 
 
-def parse_args() -> tuple[bool, float, float, int, float, float, List[str]]:
+def parse_args() -> tuple[bool, str, float, float, int, float, float, List[str]]:
     """Parse command line arguments."""
     if len(sys.argv) < 2:
         print(__doc__)
         sys.exit(1)
 
     show_plot = False
+    save_plot = ""  # Empty string means don't save, otherwise filename
     interval = 0.1
     merge_threshold = 5.0  # Default for demo sensitivity
     min_length = 5  # Minimum plateau length
@@ -62,6 +67,12 @@ def parse_args() -> tuple[bool, float, float, int, float, float, List[str]]:
         if sys.argv[i] == "--plot":
             show_plot = True
             i += 1
+        elif sys.argv[i] == "--save":
+            if i + 1 >= len(sys.argv):
+                print("Error: --save requires a filename")
+                sys.exit(1)
+            save_plot = sys.argv[i + 1]
+            i += 2
         elif sys.argv[i] == "--interval":
             if i + 1 >= len(sys.argv):
                 print("Error: --interval requires a value")
@@ -141,6 +152,7 @@ def parse_args() -> tuple[bool, float, float, int, float, float, List[str]]:
 
     return (
         show_plot,
+        save_plot,
         interval,
         merge_threshold,
         min_length,
@@ -166,6 +178,7 @@ def main() -> None:
     """Main execution function."""
     (
         show_plot,
+        save_plot,
         interval,
         merge_threshold,
         min_length,
@@ -213,9 +226,15 @@ def main() -> None:
     print_summary(events, return_code)
 
     # Create plot if requested
-    if show_plot:
+    if show_plot or save_plot:
         create_plot(
-            log_file, events, merge_threshold, min_length, tolerance, jump_threshold
+            log_file,
+            events,
+            merge_threshold,
+            min_length,
+            tolerance,
+            jump_threshold,
+            save_plot,
         )
 
 

@@ -15,6 +15,7 @@ def create_plot(
     min_length: int = 5,
     tolerance: float = 2.0,
     jump_threshold: float = 2.0,
+    save_filename: str = "",
 ) -> None:
     """Create and display plot of FD usage with event markers and jump labels."""
     try:
@@ -186,4 +187,9 @@ def create_plot(
         ax.legend()
 
     plt.tight_layout()
-    plt.show()
+
+    if save_filename:
+        plt.savefig(save_filename, dpi=300, bbox_inches="tight")
+        print(f"Plot saved to: {save_filename}")
+    else:
+        plt.show()
