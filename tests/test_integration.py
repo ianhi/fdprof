@@ -81,7 +81,7 @@ print("Script finished")
         log_file.unlink(missing_ok=True)
 
         result = subprocess.run(
-            ["uv", "run", "fdprof", "echo", "test"],
+            ["uv", "run", "fdprof", "sleep", "0.2"],
             capture_output=True,
             text=True,
             timeout=10,

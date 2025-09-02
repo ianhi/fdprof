@@ -634,7 +634,6 @@ find . -type f -name "*.pyc" -delete
 - **psutil** - Cross-platform process monitoring
 - **matplotlib** - Plotting and visualization
 - **numpy** - Numerical analysis
-- **scipy** - Statistical functions
 
 ## 📄 License
 
