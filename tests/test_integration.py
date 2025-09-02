@@ -179,11 +179,15 @@ print("Script finished")
         # Create a script that opens and closes files
         script_content = """
 import time
+import tempfile
+import os
 
 # Open some files to increase FD count
 files = []
+temp_dir = tempfile.gettempdir()
 for i in range(3):
-    f = open(f"/tmp/fdprof_test_{i}.txt", "w")
+    temp_path = os.path.join(temp_dir, f"fdprof_test_{i}.txt")
+    f = open(temp_path, "w")
     files.append(f)
     f.write(f"test content {i}")
 
