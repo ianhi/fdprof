@@ -9,7 +9,7 @@ This file contains development notes and commands for working with fdprof using 
 # Install development dependencies
 uv sync --extra dev
 
-# Install pre-commit hooks  
+# Install pre-commit hooks
 uv run pre-commit install
 
 # Verify installation
@@ -102,7 +102,7 @@ fdprof/
 ### Module Organization
 - `core.py`: CLI parsing, main execution loop
 - `monitoring.py`: Process monitoring and FD capture
-- `events.py`: EVENT: message parsing  
+- `events.py`: EVENT: message parsing
 - `analysis.py`: Plateau detection algorithms
 - `plotting.py`: Matplotlib visualization
 
@@ -126,7 +126,7 @@ fdprof/
 # Add new dependency
 uv add <package>
 
-# Add dev dependency  
+# Add dev dependency
 uv add --group dev <package>
 
 # Update all dependencies
@@ -143,7 +143,7 @@ uv sync --upgrade
 ## Troubleshooting
 
 ### Tests Not Running
-- Ensure package is installed: `uv sync --reinstall` 
+- Ensure package is installed: `uv sync --reinstall`
 - Check Python path includes src: `uv run python -c "import sys; print(sys.path)"`
 - Verify imports work: `uv run python -c "import fdprof; print('OK')"`
 
@@ -163,13 +163,13 @@ Remember fdprof's mission: **whole-process monitoring from the outside**
 
 ✅ Good additions:
 - Better FD analysis algorithms
-- Additional plot types 
+- Additional plot types
 - More OS compatibility
 - Performance improvements
 
 ❌ Avoid these (scope creep):
 - Python decorators
-- In-process instrumentation  
+- In-process instrumentation
 - Complex configuration systems
 - Web interfaces or APIs
 

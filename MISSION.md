@@ -12,18 +12,18 @@ fdprof is designed to monitor **entire processes** and their file descriptor usa
 - **Operating system level**: Leverage OS-level tools (psutil) for accurate FD tracking
 
 ### What fdprof IS:
-✅ A process wrapper for FD monitoring  
-✅ An external analysis tool  
-✅ A command-line utility  
-✅ A visualization and plotting tool  
-✅ A debugging aid for resource leaks  
+✅ A process wrapper for FD monitoring
+✅ An external analysis tool
+✅ A command-line utility
+✅ A visualization and plotting tool
+✅ A debugging aid for resource leaks
 
 ### What fdprof is NOT:
-❌ An application framework  
-❌ A library for embedding in other code  
-❌ A decorator-based monitoring system  
-❌ An APM (Application Performance Monitoring) platform  
-❌ A profiler requiring code changes  
+❌ An application framework
+❌ A library for embedding in other code
+❌ A decorator-based monitoring system
+❌ An APM (Application Performance Monitoring) platform
+❌ A profiler requiring code changes
 
 ### Scope Boundaries
 To prevent scope creep, fdprof will **NOT** include:
@@ -64,7 +64,7 @@ These would violate our mission:
 def my_function():
     pass
 
-# DON'T: Context managers  
+# DON'T: Context managers
 with fdprof.monitoring():
     do_work()
 

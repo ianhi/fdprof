@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import time
-import sys
+
 
 def log_event(message: str):
     print(f"EVENT: {time.time():.9f} {message}")
+
 
 print("Starting test script...")
 log_event("Test script started")

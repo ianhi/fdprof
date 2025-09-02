@@ -113,7 +113,7 @@ def log_event(message):
 def test_fdprof():
     print("Testing fdprof functionality...")
     log_event("Test script started")
-    
+
     # Open some file descriptors
     files = []
     for i in range(3):
@@ -122,16 +122,16 @@ def test_fdprof():
         f.flush()
         files.append(f)
         log_event(f"Opened file {i}: {f.name}")
-    
+
     time.sleep(0.5)
     log_event("Processing data")
-    
+
     # Close files
     for i, f in enumerate(files):
         f.close()
         os.unlink(f.name)
         log_event(f"Closed and deleted file {i}")
-    
+
     log_event("Test script completed")
     print("Test script finished successfully!")
 
@@ -221,7 +221,7 @@ Event Timeline:
 ## Platform Notes
 
 - **Linux**: Full support, all features work
-- **macOS**: Full support, may need GUI setup for plotting  
+- **macOS**: Full support, may need GUI setup for plotting
 - **Windows**: Limited support (FD monitoring may not work)
 
 ## Performance Notes
