@@ -550,14 +550,20 @@ export MPLBACKEND=TkAgg
 
 - **Linux**: Full support for all features
 - **macOS**: Full support, may need GUI backend for plotting
-- **Windows**: Full support (uses num_handles() for efficient handle monitoring)
+- **Windows**: Full support with optimal performance using native handle counting
 
 **Performance Notes:**
-- **Platform detection**: FD counting method is determined once at startup for optimal performance
-- **Unix systems** (Linux/macOS): Uses `psutil.num_fds()` - highly efficient O(1) operation
-- **Windows**: Uses `psutil.num_handles()` - highly efficient O(1) operation for handle counting
-- **Fallback**: Uses `len(psutil.open_files())` only on platforms where neither method is available
-- All platforms now have optimal performance with no per-loop overhead
+
+fdprof uses intelligent platform detection to ensure optimal performance on all systems:
+
+- **Startup optimization**: The best FD counting method is determined once at application startup, eliminating runtime overhead
+- **Zero per-loop cost**: No try/except blocks or method detection during monitoring loops
+- **Platform-specific APIs**:
+  - **Unix systems** (Linux/macOS): Uses `psutil.num_fds()` - direct system call, O(1) complexity
+  - **Windows**: Uses `psutil.num_handles()` - native Windows API, O(1) complexity for handle counting
+  - **Fallback**: Uses `len(psutil.open_files())` only on unsupported platforms - O(n) but rare
+- **High-frequency monitoring**: Optimized for sub-100ms sampling intervals without performance degradation
+- **Memory efficient**: Minimal memory overhead regardless of monitoring duration
 
 ## 📈 Use Cases
 
