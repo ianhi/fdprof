@@ -552,6 +552,11 @@ export MPLBACKEND=TkAgg
 - **macOS**: Full support, may need GUI backend for plotting
 - **Windows**: Full support (uses open_files() count for FD monitoring)
 
+**Performance Notes:**
+- **Unix systems** (Linux/macOS): Uses `psutil.num_fds()` - highly efficient O(1) operation
+- **Windows**: Uses `len(psutil.open_files())` - slightly slower O(n) operation but provides identical functionality
+- The performance difference is negligible for typical monitoring scenarios (< 1000 open files)
+
 ## 📈 Use Cases
 
 ### Performance Analysis
