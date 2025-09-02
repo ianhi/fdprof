@@ -550,12 +550,14 @@ export MPLBACKEND=TkAgg
 
 - **Linux**: Full support for all features
 - **macOS**: Full support, may need GUI backend for plotting
-- **Windows**: Full support (uses open_files() count for FD monitoring)
+- **Windows**: Full support (uses num_handles() for efficient handle monitoring)
 
 **Performance Notes:**
+- **Platform detection**: FD counting method is determined once at startup for optimal performance
 - **Unix systems** (Linux/macOS): Uses `psutil.num_fds()` - highly efficient O(1) operation
-- **Windows**: Uses `len(psutil.open_files())` - slightly slower O(n) operation but provides identical functionality
-- The performance difference is negligible for typical monitoring scenarios (< 1000 open files)
+- **Windows**: Uses `psutil.num_handles()` - highly efficient O(1) operation for handle counting
+- **Fallback**: Uses `len(psutil.open_files())` only on platforms where neither method is available
+- All platforms now have optimal performance with no per-loop overhead
 
 ## 📈 Use Cases
 

@@ -6,9 +6,23 @@ import json
 import select
 import subprocess
 import time
-from typing import List, Optional
+from typing import Callable, List, Optional
 
 import psutil
+
+
+def _get_fd_counter(psutil_proc: psutil.Process) -> Callable[[], int]:
+    """Determine the best FD counting method for the current platform."""
+    # Try methods in order of efficiency
+    try:
+        psutil_proc.num_fds()
+        return lambda: psutil_proc.num_fds()
+    except AttributeError:
+        try:
+            psutil_proc.num_handles()
+            return lambda: psutil_proc.num_handles()
+        except AttributeError:
+            return lambda: len(psutil_proc.open_files())
 
 
 def capture_output_and_monitor_fds(
@@ -21,21 +35,22 @@ def capture_output_and_monitor_fds(
     """Capture process output and monitor FD usage simultaneously."""
     output_lines = []
 
+    # Determine the FD counting method once at startup
+    get_fd_count = None
+    if psutil_proc:
+        try:
+            get_fd_count = _get_fd_counter(psutil_proc)
+        except Exception:
+            get_fd_count = None
+
     with open(log_file, "w") as f:
         while proc.poll() is None:
             # Monitor FD usage
             try:
                 current_time = time.time()
-                if psutil_proc:
+                if get_fd_count:
                     try:
-                        # Try num_fds() first (more efficient on Unix)
-                        fd_count = psutil_proc.num_fds()
-                    except AttributeError:
-                        # Fall back to len(open_files()) on Windows
-                        try:
-                            fd_count = len(psutil_proc.open_files())
-                        except (psutil.AccessDenied, psutil.NoSuchProcess):
-                            fd_count = -1
+                        fd_count = get_fd_count()
                     except (psutil.AccessDenied, psutil.NoSuchProcess):
                         fd_count = -1
                 else:
