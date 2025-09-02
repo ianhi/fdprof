@@ -550,7 +550,7 @@ export MPLBACKEND=TkAgg
 
 - **Linux**: Full support for all features
 - **macOS**: Full support, may need GUI backend for plotting
-- **Windows**: Limited support (psutil.num_fds() not available)
+- **Windows**: Full support (uses open_files() count for FD monitoring)
 
 ## 📈 Use Cases
 

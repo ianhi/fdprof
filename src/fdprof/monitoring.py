@@ -26,7 +26,15 @@ def capture_output_and_monitor_fds(
             # Monitor FD usage
             try:
                 current_time = time.time()
-                fd_count = psutil_proc.num_fds() if psutil_proc else -1
+                if psutil_proc:
+                    try:
+                        # Try num_fds() first (more efficient on Unix)
+                        fd_count = psutil_proc.num_fds()
+                    except AttributeError:
+                        # Fall back to len(open_files()) on Windows
+                        fd_count = len(psutil_proc.open_files())
+                else:
+                    fd_count = -1
 
                 fd_data = {
                     "timestamp": current_time,
