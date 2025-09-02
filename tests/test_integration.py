@@ -15,7 +15,7 @@ class TestCLIIntegration:
             ["uv", "run", "fdprof", "echo", "hello world"],
             capture_output=True,
             text=True,
-            timeout=10
+            timeout=10,
         )
 
         assert result.returncode == 0
@@ -25,7 +25,7 @@ class TestCLIIntegration:
     def test_cli_with_events(self):
         """Test CLI with a script that generates events."""
         # Create a temporary script that generates events
-        script_content = '''
+        script_content = """
 import time
 import sys
 
@@ -37,9 +37,9 @@ log_event("Script initialized")
 time.sleep(0.1)
 log_event("Processing complete")
 print("Script finished")
-'''
+"""
 
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(script_content)
             script_path = f.name
 
@@ -48,7 +48,7 @@ print("Script finished")
                 ["uv", "run", "fdprof", "python", script_path],
                 capture_output=True,
                 text=True,
-                timeout=10
+                timeout=10,
             )
 
             assert result.returncode == 0
@@ -68,7 +68,7 @@ print("Script finished")
             ["uv", "run", "fdprof", "--interval", "0.2", "echo", "test"],
             capture_output=True,
             text=True,
-            timeout=10
+            timeout=10,
         )
 
         assert result.returncode == 0
@@ -84,7 +84,7 @@ print("Script finished")
             ["uv", "run", "fdprof", "echo", "test"],
             capture_output=True,
             text=True,
-            timeout=10
+            timeout=10,
         )
 
         assert result.returncode == 0
@@ -112,7 +112,7 @@ print("Script finished")
             ["uv", "run", "fdprof", "nonexistent_command_xyz"],
             capture_output=True,
             text=True,
-            timeout=10
+            timeout=10,
         )
 
         # Should fail but fdprof itself should handle it gracefully
@@ -124,7 +124,7 @@ print("Script finished")
             ["uv", "run", "fdprof", "python", "-c", "print('hello'); print('world')"],
             capture_output=True,
             text=True,
-            timeout=10
+            timeout=10,
         )
 
         assert result.returncode == 0
@@ -134,10 +134,7 @@ print("Script finished")
     def test_cli_help_output(self):
         """Test CLI help/usage output."""
         result = subprocess.run(
-            ["uv", "run", "fdprof"],
-            capture_output=True,
-            text=True,
-            timeout=10
+            ["uv", "run", "fdprof"], capture_output=True, text=True, timeout=10
         )
 
         # Should exit with error (no command) and show usage
@@ -151,7 +148,7 @@ print("Script finished")
             ["uv", "run", "fdprof", "--interval", "-0.1", "echo", "test"],
             capture_output=True,
             text=True,
-            timeout=10
+            timeout=10,
         )
         assert result.returncode == 1
 
@@ -160,7 +157,7 @@ print("Script finished")
             ["uv", "run", "fdprof", "--interval", "abc", "echo", "test"],
             capture_output=True,
             text=True,
-            timeout=10
+            timeout=10,
         )
         assert result.returncode == 1
 
@@ -170,7 +167,7 @@ print("Script finished")
             ["uv", "run", "fdprof", "python", "-c", "import sys; sys.exit(42)"],
             capture_output=True,
             text=True,
-            timeout=10
+            timeout=10,
         )
 
         # fdprof should complete successfully even if monitored command fails
@@ -180,7 +177,7 @@ print("Script finished")
     def test_cli_fd_monitoring(self):
         """Test that CLI actually monitors file descriptors."""
         # Create a script that opens and closes files
-        script_content = '''
+        script_content = """
 import time
 
 # Open some files to increase FD count
@@ -197,9 +194,9 @@ for f in files:
     f.close()
 
 print("FD test completed")
-'''
+"""
 
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(script_content)
             script_path = f.name
 
@@ -212,7 +209,7 @@ print("FD test completed")
                 ["uv", "run", "fdprof", "python", script_path],
                 capture_output=True,
                 text=True,
-                timeout=10
+                timeout=10,
             )
 
             assert result.returncode == 0
@@ -229,7 +226,9 @@ print("FD test completed")
                 assert len(data_points) > 1
 
                 # Should have valid FD counts (>= 0)
-                fd_counts = [dp["open_fds"] for dp in data_points if dp["open_fds"] >= 0]
+                fd_counts = [
+                    dp["open_fds"] for dp in data_points if dp["open_fds"] >= 0
+                ]
                 assert len(fd_counts) > 0
 
             # Clean up log file

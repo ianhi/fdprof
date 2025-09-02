@@ -10,7 +10,7 @@ import pytest
 @pytest.fixture
 def temp_log_file():
     """Create a temporary log file for testing."""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.jsonl', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f:
         log_file = f.name
 
     yield log_file
@@ -44,29 +44,29 @@ def sample_events():
             "type": "event",
             "elapsed": 0.1,
             "message": "Application started",
-            "timestamp": 1000.1
+            "timestamp": 1000.1,
         },
         {
             "type": "event",
             "elapsed": 0.5,
             "message": "Database connected",
-            "timestamp": 1000.5
+            "timestamp": 1000.5,
         },
         {
             "type": "event",
             "elapsed": 0.8,
             "message": "Processing complete",
-            "timestamp": 1000.8
-        }
+            "timestamp": 1000.8,
+        },
     ]
 
 
 @pytest.fixture
 def populated_log_file(temp_log_file, sample_fd_data):
     """Create a log file populated with sample FD data."""
-    with open(temp_log_file, 'w') as f:
+    with open(temp_log_file, "w") as f:
         for data_point in sample_fd_data:
-            f.write(json.dumps(data_point) + '\n')
+            f.write(json.dumps(data_point) + "\n")
 
     return temp_log_file
 
@@ -74,7 +74,7 @@ def populated_log_file(temp_log_file, sample_fd_data):
 @pytest.fixture
 def test_script():
     """Create a temporary test script for integration tests."""
-    script_content = '''#!/usr/bin/env python3
+    script_content = """#!/usr/bin/env python3
 import time
 import sys
 
@@ -107,9 +107,9 @@ for i, f in enumerate(files):
 
 log_event("Script completed")
 print("Test script finished")
-'''
+"""
 
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
         f.write(script_content)
         script_path = f.name
 
@@ -126,22 +126,22 @@ print("Test script finished")
 def plateau_test_data():
     """Provide test data for plateau detection."""
     return {
-        'simple_plateau': {
-            'times': [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
-            'values': [100, 100, 100, 100, 100, 100]
+        "simple_plateau": {
+            "times": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
+            "values": [100, 100, 100, 100, 100, 100],
         },
-        'two_plateaus': {
-            'times': [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
-            'values': [10, 10, 10, 10, 50, 50, 50, 50, 50, 50]
+        "two_plateaus": {
+            "times": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+            "values": [10, 10, 10, 10, 50, 50, 50, 50, 50, 50],
         },
-        'noisy_plateau': {
-            'times': [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
-            'values': [98, 101, 99, 102, 100, 99, 101, 100, 98, 102]
+        "noisy_plateau": {
+            "times": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+            "values": [98, 101, 99, 102, 100, 99, 101, 100, 98, 102],
         },
-        'step_function': {
-            'times': list(range(15)),
-            'values': [10] * 5 + [100] * 5 + [20] * 5
-        }
+        "step_function": {
+            "times": list(range(15)),
+            "values": [10] * 5 + [100] * 5 + [20] * 5,
+        },
     }
 
 
@@ -166,5 +166,5 @@ def mock_subprocess_output():
         "Processing data...",
         "EVENT: 1000.345678 Data processing started",
         "EVENT: 1000.456789 Data processing complete",
-        "Application finished."
+        "Application finished.",
     ]

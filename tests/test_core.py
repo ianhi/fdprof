@@ -4,7 +4,6 @@ import sys
 from unittest.mock import patch
 
 import pytest
-
 from fdprof.core import parse_args, print_summary
 
 
@@ -13,99 +12,120 @@ class TestArgumentParsing:
 
     def test_parse_args_basic_command(self):
         """Test parsing basic command without options."""
-        with patch.object(sys, 'argv', ['fdprof', 'echo', 'hello']):
+        with patch.object(sys, "argv", ["fdprof", "echo", "hello"]):
             show_plot, interval, command = parse_args()
             assert show_plot is False
             assert interval == 0.1
-            assert command == ['echo', 'hello']
+            assert command == ["echo", "hello"]
 
     def test_parse_args_with_plot_option(self):
         """Test parsing with --plot option."""
-        with patch.object(sys, 'argv', ['fdprof', '--plot', 'python', 'script.py']):
+        with patch.object(sys, "argv", ["fdprof", "--plot", "python", "script.py"]):
             show_plot, interval, command = parse_args()
             assert show_plot is True
             assert interval == 0.1
-            assert command == ['python', 'script.py']
+            assert command == ["python", "script.py"]
 
     def test_parse_args_with_interval_option(self):
         """Test parsing with --interval option."""
-        with patch.object(sys, 'argv', ['fdprof', '--interval', '0.5', 'sleep', '1']):
+        with patch.object(sys, "argv", ["fdprof", "--interval", "0.5", "sleep", "1"]):
             show_plot, interval, command = parse_args()
             assert show_plot is False
             assert interval == 0.5
-            assert command == ['sleep', '1']
+            assert command == ["sleep", "1"]
 
     def test_parse_args_with_both_options(self):
         """Test parsing with both --plot and --interval options."""
-        with patch.object(sys, 'argv', ['fdprof', '--plot', '--interval', '0.2', 'ls', '-la']):
+        with patch.object(
+            sys, "argv", ["fdprof", "--plot", "--interval", "0.2", "ls", "-la"]
+        ):
             show_plot, interval, command = parse_args()
             assert show_plot is True
             assert interval == 0.2
-            assert command == ['ls', '-la']
+            assert command == ["ls", "-la"]
 
     def test_parse_args_options_order_independence(self):
         """Test that option order doesn't matter."""
-        with patch.object(sys, 'argv', ['fdprof', '--interval', '0.3', '--plot', 'pwd']):
+        with patch.object(
+            sys, "argv", ["fdprof", "--interval", "0.3", "--plot", "pwd"]
+        ):
             show_plot, interval, command = parse_args()
             assert show_plot is True
             assert interval == 0.3
-            assert command == ['pwd']
+            assert command == ["pwd"]
 
     def test_parse_args_no_command_exit(self):
         """Test that missing command causes exit."""
-        with patch.object(sys, 'argv', ['fdprof']):
+        with patch.object(sys, "argv", ["fdprof"]):
             with pytest.raises(SystemExit):
                 parse_args()
 
     def test_parse_args_only_options_no_command_exit(self):
         """Test that options without command causes exit."""
-        with patch.object(sys, 'argv', ['fdprof', '--plot', '--interval', '0.5']):
+        with patch.object(sys, "argv", ["fdprof", "--plot", "--interval", "0.5"]):
             with pytest.raises(SystemExit):
                 parse_args()
 
     def test_parse_args_invalid_interval_negative(self):
         """Test that negative interval causes exit."""
-        with patch.object(sys, 'argv', ['fdprof', '--interval', '-0.1', 'echo', 'test']):
+        with patch.object(
+            sys, "argv", ["fdprof", "--interval", "-0.1", "echo", "test"]
+        ):
             with pytest.raises(SystemExit):
                 parse_args()
 
     def test_parse_args_invalid_interval_zero(self):
         """Test that zero interval causes exit."""
-        with patch.object(sys, 'argv', ['fdprof', '--interval', '0', 'echo', 'test']):
+        with patch.object(sys, "argv", ["fdprof", "--interval", "0", "echo", "test"]):
             with pytest.raises(SystemExit):
                 parse_args()
 
     def test_parse_args_invalid_interval_non_numeric(self):
         """Test that non-numeric interval causes exit."""
-        with patch.object(sys, 'argv', ['fdprof', '--interval', 'abc', 'echo', 'test']):
+        with patch.object(sys, "argv", ["fdprof", "--interval", "abc", "echo", "test"]):
             with pytest.raises(SystemExit):
                 parse_args()
 
     def test_parse_args_interval_missing_value(self):
         """Test that --interval without value causes exit."""
-        with patch.object(sys, 'argv', ['fdprof', '--interval']):
+        with patch.object(sys, "argv", ["fdprof", "--interval"]):
             with pytest.raises(SystemExit):
                 parse_args()
 
     def test_parse_args_unknown_option(self):
         """Test that unknown option causes exit."""
-        with patch.object(sys, 'argv', ['fdprof', '--unknown', 'echo', 'test']):
+        with patch.object(sys, "argv", ["fdprof", "--unknown", "echo", "test"]):
             with pytest.raises(SystemExit):
                 parse_args()
 
     def test_parse_args_command_with_arguments(self):
         """Test parsing command with multiple arguments."""
-        with patch.object(sys, 'argv', ['fdprof', 'python', '-c', 'print("hello world")']):
+        with patch.object(
+            sys, "argv", ["fdprof", "python", "-c", 'print("hello world")']
+        ):
             show_plot, interval, command = parse_args()
-            assert command == ['python', '-c', 'print("hello world")']
+            assert command == ["python", "-c", 'print("hello world")']
 
     def test_parse_args_complex_command(self):
         """Test parsing complex command with options and arguments."""
-        with patch.object(sys, 'argv', ['fdprof', '--plot', '--interval', '0.05', 'python', '-u', 'test.py', '--verbose']):
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "fdprof",
+                "--plot",
+                "--interval",
+                "0.05",
+                "python",
+                "-u",
+                "test.py",
+                "--verbose",
+            ],
+        ):
             show_plot, interval, command = parse_args()
             assert show_plot is True
             assert interval == 0.05
-            assert command == ['python', '-u', 'test.py', '--verbose']
+            assert command == ["python", "-u", "test.py", "--verbose"]
 
 
 class TestPrintSummary:
@@ -128,7 +148,7 @@ class TestPrintSummary:
         events = [
             {"elapsed": 0.5, "message": "First event"},
             {"elapsed": 1.2, "message": "Second event"},
-            {"elapsed": 2.1, "message": "Third event"}
+            {"elapsed": 2.1, "message": "Third event"},
         ]
         return_code = 0
 
@@ -157,7 +177,7 @@ class TestPrintSummary:
         events = [
             {"elapsed": 0.123456, "message": "Precise timing"},
             {"elapsed": 10.0, "message": "Round number"},
-            {"elapsed": 123.789, "message": "Large number"}
+            {"elapsed": 123.789, "message": "Large number"},
         ]
         return_code = 0
 

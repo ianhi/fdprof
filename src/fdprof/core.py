@@ -36,11 +36,11 @@ def parse_args() -> tuple[bool, float, List[str]]:
     i = 1
 
     # Parse options
-    while i < len(sys.argv) and sys.argv[i].startswith('--'):
-        if sys.argv[i] == '--plot':
+    while i < len(sys.argv) and sys.argv[i].startswith("--"):
+        if sys.argv[i] == "--plot":
             show_plot = True
             i += 1
-        elif sys.argv[i] == '--interval':
+        elif sys.argv[i] == "--interval":
             if i + 1 >= len(sys.argv):
                 print("Error: --interval requires a value")
                 sys.exit(1)
@@ -53,7 +53,7 @@ def parse_args() -> tuple[bool, float, List[str]]:
                 print("Error: interval must be a number")
                 sys.exit(1)
             i += 2
-        elif sys.argv[i] in ('--help', '-h'):
+        elif sys.argv[i] in ("--help", "-h"):
             print(__doc__)
             sys.exit(0)
         else:
@@ -92,10 +92,7 @@ def main() -> None:
 
     # Start the process
     proc = subprocess.Popen(
-        command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True
+        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
     )
 
     # Get psutil process handle

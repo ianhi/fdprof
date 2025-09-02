@@ -7,10 +7,14 @@ from typing import Any, Dict, List
 import numpy as np
 
 
-def detect_plateaus(times: List[float], values: List[int],
-                    min_length: int = 5, tolerance: float = 5.0,
-                    merge_close_levels: bool = True,
-                    merge_threshold: float = 15.0) -> List[Dict[str, Any]]:
+def detect_plateaus(
+    times: List[float],
+    values: List[int],
+    min_length: int = 5,
+    tolerance: float = 5.0,
+    merge_close_levels: bool = True,
+    merge_threshold: float = 15.0,
+) -> List[Dict[str, Any]]:
     """Detect stable plateaus in FD usage, merging gradual transitions.
 
     Args:
@@ -40,7 +44,7 @@ def detect_plateaus(times: List[float], values: List[int],
         # Extend region while values are similar to recent mean
         while j < len(values):
             # Use a sliding window mean for comparison
-            recent_vals = region_vals[-min(5, len(region_vals)):]
+            recent_vals = region_vals[-min(5, len(region_vals)) :]
             recent_mean = np.mean(recent_vals)
 
             if abs(values[j] - recent_mean) <= tolerance:
@@ -52,15 +56,17 @@ def detect_plateaus(times: List[float], values: List[int],
 
         # If we found a stable region
         if len(region_vals) >= min_length:
-            stable_regions.append({
-                'level': np.median(region_vals),
-                'start_time': region_times[0],
-                'end_time': region_times[-1],
-                'start_idx': i,
-                'end_idx': j - 1,
-                'variance': np.var(region_vals),
-                'values': region_vals
-            })
+            stable_regions.append(
+                {
+                    "level": np.median(region_vals),
+                    "start_time": region_times[0],
+                    "end_time": region_times[-1],
+                    "start_idx": i,
+                    "end_idx": j - 1,
+                    "variance": np.var(region_vals),
+                    "values": region_vals,
+                }
+            )
             i = j
         else:
             i += 1
@@ -76,11 +82,13 @@ def detect_plateaus(times: List[float], values: List[int],
         # Check if next region exists and there's a gap
         if i + 1 < len(stable_regions):
             next_region = stable_regions[i + 1]
-            gap_start = current['end_idx'] + 1
-            gap_end = next_region['start_idx'] - 1
+            gap_start = current["end_idx"] + 1
+            gap_end = next_region["start_idx"] - 1
 
             # If there's a transition zone between plateaus
-            if gap_end >= gap_start and gap_end - gap_start < 20:  # Transition shouldn't be too long
+            if (
+                gap_end >= gap_start and gap_end - gap_start < 20
+            ):  # Transition shouldn't be too long
                 # This is likely a transition, not a plateau
                 # Just add the current plateau
                 plateaus.append(current)
@@ -105,24 +113,26 @@ def detect_plateaus(times: List[float], values: List[int],
             j = i + 1
             while j < len(plateaus):
                 next_plateau = plateaus[j]
-                level_diff = abs(current['level'] - next_plateau['level'])
+                level_diff = abs(current["level"] - next_plateau["level"])
 
                 # Check if they should be merged
                 if level_diff < merge_threshold:
                     # Merge plateaus
-                    if 'values' in current and 'values' in next_plateau:
-                        all_vals = current['values'] + next_plateau['values']
+                    if "values" in current and "values" in next_plateau:
+                        all_vals = current["values"] + next_plateau["values"]
                     else:
                         all_vals = []
 
                     current = {
-                        'level': np.median(all_vals) if all_vals else (current['level'] + next_plateau['level']) / 2,
-                        'start_time': current['start_time'],
-                        'end_time': next_plateau['end_time'],
-                        'start_idx': current['start_idx'],
-                        'end_idx': next_plateau['end_idx'],
-                        'variance': np.var(all_vals) if all_vals else 0,
-                        'values': all_vals
+                        "level": np.median(all_vals)
+                        if all_vals
+                        else (current["level"] + next_plateau["level"]) / 2,
+                        "start_time": current["start_time"],
+                        "end_time": next_plateau["end_time"],
+                        "start_idx": current["start_idx"],
+                        "end_idx": next_plateau["end_idx"],
+                        "variance": np.var(all_vals) if all_vals else 0,
+                        "values": all_vals,
                     }
                     merged_with_next = True
                     j += 1

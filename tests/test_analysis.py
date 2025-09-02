@@ -1,7 +1,6 @@
 """Tests for analysis and plateau detection functionality."""
 
 import numpy as np
-
 from fdprof.analysis import detect_plateaus
 
 
@@ -29,9 +28,9 @@ class TestPlateauDetection:
 
         assert len(plateaus) == 1
         plateau = plateaus[0]
-        assert plateau['start_time'] == 0.0
-        assert plateau['end_time'] == 0.9
-        assert 99 <= plateau['level'] <= 101
+        assert plateau["start_time"] == 0.0
+        assert plateau["end_time"] == 0.9
+        assert 99 <= plateau["level"] <= 101
 
     def test_detect_plateaus_multiple_regions(self):
         """Test detecting multiple plateau regions."""
@@ -44,13 +43,13 @@ class TestPlateauDetection:
             values,
             min_length=5,
             tolerance=1.0,
-            merge_close_levels=False
+            merge_close_levels=False,
         )
 
         assert len(plateaus) >= 1  # Should detect at least one clear plateau
 
         # Check if we detected the high plateau
-        high_plateau = [p for p in plateaus if p['level'] > 40]
+        high_plateau = [p for p in plateaus if p["level"] > 40]
         assert len(high_plateau) >= 1
 
     def test_detect_plateaus_with_noise(self):
@@ -65,12 +64,12 @@ class TestPlateauDetection:
             base_times.tolist(),
             base_values.astype(int).tolist(),
             min_length=10,
-            tolerance=5.0
+            tolerance=5.0,
         )
 
         assert len(plateaus) >= 1
         # The detected level should be close to 100
-        assert 95 <= plateaus[0]['level'] <= 105
+        assert 95 <= plateaus[0]["level"] <= 105
 
     def test_detect_plateaus_merge_close_levels(self):
         """Test merging of plateaus with similar levels."""
@@ -84,7 +83,7 @@ class TestPlateauDetection:
             min_length=5,
             tolerance=1.0,
             merge_close_levels=False,
-            merge_threshold=20.0
+            merge_threshold=20.0,
         )
 
         plateaus_with_merge = detect_plateaus(
@@ -93,7 +92,7 @@ class TestPlateauDetection:
             min_length=5,
             tolerance=1.0,
             merge_close_levels=True,
-            merge_threshold=20.0  # Should merge plateaus within 20 units
+            merge_threshold=20.0,  # Should merge plateaus within 20 units
         )
 
         # With merging enabled, we should have fewer plateaus
@@ -109,7 +108,7 @@ class TestPlateauDetection:
         plateaus_long = detect_plateaus(times, values, min_length=25)
 
         assert len(plateaus_short) >= 1  # Should detect with min_length=5
-        assert len(plateaus_long) == 0   # Should not detect with min_length=25
+        assert len(plateaus_long) == 0  # Should not detect with min_length=25
 
     def test_detect_plateaus_tolerance(self):
         """Test plateau detection tolerance parameter."""
@@ -131,18 +130,14 @@ class TestPlateauDetection:
         values = [10] * 10 + [100] * 10 + [20] * 10
 
         plateaus = detect_plateaus(
-            times,
-            values,
-            min_length=5,
-            tolerance=2.0,
-            merge_close_levels=False
+            times, values, min_length=5, tolerance=2.0, merge_close_levels=False
         )
 
         # Should detect multiple distinct plateaus
         assert len(plateaus) >= 2
 
         # Check that we have both low and high levels
-        levels = [p['level'] for p in plateaus]
+        levels = [p["level"] for p in plateaus]
         assert any(level < 30 for level in levels)  # Low plateau
         assert any(level > 80 for level in levels)  # High plateau
 
@@ -155,17 +150,17 @@ class TestPlateauDetection:
 
         if plateaus:
             plateau = plateaus[0]
-            required_keys = ['level', 'start_time', 'end_time', 'start_idx', 'end_idx']
+            required_keys = ["level", "start_time", "end_time", "start_idx", "end_idx"]
             for key in required_keys:
                 assert key in plateau
 
             # Check data types and ranges
-            assert isinstance(plateau['level'], (int, float))
-            assert isinstance(plateau['start_time'], (int, float))
-            assert isinstance(plateau['end_time'], (int, float))
-            assert isinstance(plateau['start_idx'], int)
-            assert isinstance(plateau['end_idx'], int)
+            assert isinstance(plateau["level"], (int, float))
+            assert isinstance(plateau["start_time"], (int, float))
+            assert isinstance(plateau["end_time"], (int, float))
+            assert isinstance(plateau["start_idx"], int)
+            assert isinstance(plateau["end_idx"], int)
 
             # Check logical constraints
-            assert plateau['start_time'] <= plateau['end_time']
-            assert plateau['start_idx'] <= plateau['end_idx']
+            assert plateau["start_time"] <= plateau["end_time"]
+            assert plateau["start_idx"] <= plateau["end_idx"]

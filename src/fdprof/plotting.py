@@ -43,24 +43,34 @@ def create_plot(log_file: str, events: List[Dict[str, Any]]) -> None:
     valid_times = times[: len(fd_counts)]
 
     if fd_counts:
-        ax.plot(valid_times, fd_counts, "o-", linewidth=1.5, label="Open FDs", markersize=3)
+        ax.plot(
+            valid_times, fd_counts, "o-", linewidth=1.5, label="Open FDs", markersize=3
+        )
         y_max = max(fd_counts)
 
         # Detect plateaus with aggressive merging to combine gradual transitions
         plateaus = detect_plateaus(
-            valid_times, fd_counts,
-            min_length=10,           # Require longer stable regions
-            tolerance=3.0,           # Tight tolerance for stability
-            merge_close_levels=True, # Enable merging
-            merge_threshold=50.0     # Merge plateaus within 50 FDs of each other
+            valid_times,
+            fd_counts,
+            min_length=10,  # Require longer stable regions
+            tolerance=3.0,  # Tight tolerance for stability
+            merge_close_levels=True,  # Enable merging
+            merge_threshold=50.0,  # Merge plateaus within 50 FDs of each other
         )
 
         # Draw horizontal lines for each plateau
         for plateau in plateaus:
-            ax.axhline(y=plateau['level'],
-                      xmin=(plateau['start_time'] - min(valid_times)) / (max(valid_times) - min(valid_times)),
-                      xmax=(plateau['end_time'] - min(valid_times)) / (max(valid_times) - min(valid_times)),
-                      color='lightgray', linestyle='-', alpha=0.7, linewidth=2)
+            ax.axhline(
+                y=plateau["level"],
+                xmin=(plateau["start_time"] - min(valid_times))
+                / (max(valid_times) - min(valid_times)),
+                xmax=(plateau["end_time"] - min(valid_times))
+                / (max(valid_times) - min(valid_times)),
+                color="lightgray",
+                linestyle="-",
+                alpha=0.7,
+                linewidth=2,
+            )
 
         # Calculate and label jumps between consecutive plateaus
         jumps = []
@@ -68,53 +78,71 @@ def create_plot(log_file: str, events: List[Dict[str, Any]]) -> None:
             current = plateaus[i]
             next_plateau = plateaus[i + 1]
 
-            jump_size = int(next_plateau['level'] - current['level'])
+            jump_size = int(next_plateau["level"] - current["level"])
 
             # Only show significant jumps
             if abs(jump_size) >= 10:
                 # Find the transition point between plateaus
-                transition_time = (current['end_time'] + next_plateau['start_time']) / 2
-                transition_y = (current['level'] + next_plateau['level']) / 2
+                transition_time = (current["end_time"] + next_plateau["start_time"]) / 2
+                transition_y = (current["level"] + next_plateau["level"]) / 2
 
                 # Draw vertical arrow/line between plateaus
-                ax.annotate('', xy=(transition_time, next_plateau['level']),
-                           xytext=(transition_time, current['level']),
-                           arrowprops={"arrowstyle": '<->', "color": 'red' if jump_size > 0 else 'blue',
-                                         "lw": 1.5, "alpha": 0.6})
+                ax.annotate(
+                    "",
+                    xy=(transition_time, next_plateau["level"]),
+                    xytext=(transition_time, current["level"]),
+                    arrowprops={
+                        "arrowstyle": "<->",
+                        "color": "red" if jump_size > 0 else "blue",
+                        "lw": 1.5,
+                        "alpha": 0.6,
+                    },
+                )
 
                 # Add jump size label
-                sign = '+' if jump_size > 0 else ''
+                sign = "+" if jump_size > 0 else ""
                 label_text = f"{sign}{jump_size}"
                 ax.text(
                     transition_time + 0.02,
                     transition_y,
                     label_text,
                     fontsize=10,
-                    fontweight='bold',
-                    color='darkred' if jump_size > 0 else 'darkblue',
-                    verticalalignment='center',
-                    horizontalalignment='left',
-                    bbox={"boxstyle": "round,pad=0.3", "facecolor": 'white', "alpha": 0.9, "edgecolor": 'gray'}
+                    fontweight="bold",
+                    color="darkred" if jump_size > 0 else "darkblue",
+                    verticalalignment="center",
+                    horizontalalignment="left",
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "facecolor": "white",
+                        "alpha": 0.9,
+                        "edgecolor": "gray",
+                    },
                 )
 
-                jumps.append({
-                    'time': transition_time,
-                    'size': jump_size,
-                    'from_level': current['level'],
-                    'to_level': next_plateau['level']
-                })
+                jumps.append(
+                    {
+                        "time": transition_time,
+                        "size": jump_size,
+                        "from_level": current["level"],
+                        "to_level": next_plateau["level"],
+                    }
+                )
 
         # Print summary
         if plateaus:
             print(f"\nDetected {len(plateaus)} stable plateaus:")
             for i, plateau in enumerate(plateaus):
-                print(f"  Plateau {i+1}: {plateau['level']:.0f} FDs from {plateau['start_time']:.2f}s to {plateau['end_time']:.2f}s")
+                print(
+                    f"  Plateau {i+1}: {plateau['level']:.0f} FDs from {plateau['start_time']:.2f}s to {plateau['end_time']:.2f}s"
+                )
 
         if jumps:
             print(f"\nDetected {len(jumps)} jumps between plateaus:")
             for jump in jumps:
-                sign = '+' if jump['size'] > 0 else ''
-                print(f"  {jump['time']:6.2f}s: {sign}{jump['size']} FDs ({jump['from_level']:.0f} → {jump['to_level']:.0f})")
+                sign = "+" if jump["size"] > 0 else ""
+                print(
+                    f"  {jump['time']:6.2f}s: {sign}{jump['size']} FDs ({jump['from_level']:.0f} → {jump['to_level']:.0f})"
+                )
 
     else:
         y_max = 100

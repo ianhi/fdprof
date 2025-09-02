@@ -16,7 +16,7 @@ class TestEventParsing:
         output_lines = [
             "Starting application",
             "Processing data",
-            "Application finished"
+            "Application finished",
         ]
         events = parse_events(output_lines, 1000.0)
         assert events == []
@@ -43,7 +43,7 @@ class TestEventParsing:
             "Processing data",
             "EVENT: 1002.5 Data loaded",
             "EVENT: 1003.0 Processing complete",
-            "Application finished"
+            "Application finished",
         ]
         events = parse_events(output_lines, start_time)
 
@@ -74,7 +74,7 @@ class TestEventParsing:
         start_time = 1000.0
         output_lines = [
             "EVENT: invalid_timestamp Some event",
-            "EVENT: 1001.5 Valid event"
+            "EVENT: 1001.5 Valid event",
         ]
         events = parse_events(output_lines, start_time)
 
