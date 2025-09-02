@@ -47,7 +47,7 @@ def capture_output_and_monitor_fds(
                     if line:
                         line_stripped = line.strip()
                         output_lines.append(line_stripped)
-                        print(line_stripped)
+                        print(line_stripped, flush=True)
             except Exception:
                 pass
 
@@ -57,6 +57,6 @@ def capture_output_and_monitor_fds(
         for line in remaining.strip().split("\n"):
             if line:
                 output_lines.append(line)
-                print(line)
+                print(line, flush=True)
 
     return output_lines

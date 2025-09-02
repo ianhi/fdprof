@@ -51,6 +51,12 @@ fdprof --help
 
 # Test with a simple command
 fdprof echo "Hello World"
+
+# Try the built-in demo
+fdprof fdprof-demo
+
+# Or with visualization
+fdprof --plot fdprof-demo
 ```
 
 ## 📖 Usage
@@ -71,6 +77,12 @@ fdprof [OPTIONS] <command> [command_args...]
 ### Quick Examples
 
 ```bash
+# Try the built-in demo
+fdprof fdprof-demo
+
+# Demo with visualization (recommended)
+fdprof --plot fdprof-demo
+
 # Basic monitoring
 fdprof python my_script.py
 
@@ -86,6 +98,39 @@ fdprof --plot gunicorn app:app
 # Profile a database migration
 fdprof --plot python manage.py migrate
 ```
+
+## 🧪 Built-in Demo
+
+fdprof includes a built-in demo that creates realistic FD usage patterns perfect for testing and learning:
+
+```bash
+# Run the demo (basic monitoring)
+fdprof fdprof-demo
+
+# Run with visualization (recommended)
+fdprof --plot fdprof-demo
+
+# Run with custom sampling
+fdprof --interval 0.05 --plot fdprof-demo
+```
+
+### What the Demo Does
+
+The demo script creates a realistic FD usage pattern with:
+- **6 stages** of file operations (3 opening, 3 closing)
+- **Plateaus and jumps** perfect for testing fdprof's analysis
+- **7 timestamped events** for visualization
+- **Automatic cleanup** - no files left behind
+
+**Expected pattern:**
+1. Opens 5 files → plateau at +5 FDs
+2. Opens 8 more files → jump to +13 FDs
+3. Opens 6 more files → jump to +19 FDs (peak)
+4. Closes first 5 files → drop to +14 FDs
+5. Closes next 8 files → drop to +6 FDs
+6. Closes remaining files → back to baseline
+
+This creates clear plateaus and jumps that demonstrate fdprof's detection capabilities.
 
 ## 🎯 Event Logging
 
@@ -145,32 +190,47 @@ echo "EVENT: $(date +%s.%N) Script completed"
 
 ### Console Output
 ```
-Command: python my_script.py
+Command: fdprof-demo
 Logging to: fdprof.jsonl
 Sampling interval: 0.1s
 ----------------------------------------
-Starting application...
-EVENT: 1234567890.123 Application startup
-...command output...
+🔧 fdprof Demo Script - File Descriptor Usage Patterns
+============================================================
+📁 Stage 1: Opening initial batch of files...
+✅ Opened 5 files in stage 1
+EVENT: 1756830789.302727938 Stage 1 complete
+⏳ Waiting 1.5 seconds (creating stable plateau)...
+📁 Stage 2: Opening more files (creating FD jump)...
+✅ Opened 8 more files in stage 2
+EVENT: 1756830790.813626051 Stage 2 complete
+...
+🎉 Demo completed successfully!
 ----------------------------------------
 Command completed with exit code: 0
-Found 8 events
+Found 7 events
 
 Event Timeline:
-    0.05s: Application startup
-    0.12s: Database connection 1 established
-    0.15s: Database connection 2 established
-    0.89s: Processing complete
-    1.23s: All connections closed
+    0.09s: Demo started
+    0.09s: Stage 1 complete
+    1.60s: Stage 2 complete
+    3.35s: Peak reached
+    4.35s: First drop
+    5.16s: Second drop
+    5.77s: Demo complete
 
-Detected 3 stable plateaus:
+Detected 4 stable plateaus:
   Plateau 1: 25 FDs from 0.00s to 0.10s
-  Plateau 2: 30 FDs from 0.15s to 0.85s  
-  Plateau 3: 25 FDs from 0.90s to 1.25s
+  Plateau 2: 30 FDs from 0.15s to 1.58s
+  Plateau 3: 38 FDs from 1.65s to 3.30s
+  Plateau 4: 44 FDs from 3.38s to 4.32s
 
-Detected 2 jumps between plateaus:
+Detected 6 jumps between plateaus:
     0.12s: +5 FDs (25 → 30)
-    0.87s: -5 FDs (30 → 25)
+    1.62s: +8 FDs (30 → 38)
+    3.35s: +6 FDs (38 → 44)
+    4.35s: -5 FDs (44 → 39)
+    5.16s: -8 FDs (39 → 31)
+    5.77s: -6 FDs (31 → 25)
 ```
 
 ### Generated Files
@@ -266,7 +326,7 @@ export MPLBACKEND=TkAgg
 
 ### Development & Debugging
 - **Database connection pooling** - Verify connection management
-- **File handling** - Monitor file open/close patterns  
+- **File handling** - Monitor file open/close patterns
 - **Network programming** - Track socket lifecycle
 - **Service startup** - Profile initialization sequences
 
@@ -285,7 +345,7 @@ fdprof --plot gunicorn -w 4 myapp:app
 
 **Key insights:**
 - **Initial spike** (0-2s): 15→45 FDs during worker process creation
-- **Stable plateau** (2-10s): 45 FDs during normal operation  
+- **Stable plateau** (2-10s): 45 FDs during normal operation
 - **Event correlation**: Each "Worker spawned" event matched +8 FD increase
 - **Resource leak detected**: Gradual increase from 45→52 FDs over time
 
@@ -313,7 +373,7 @@ make check
 
 - **Python 3.8+**
 - **psutil** - Cross-platform process monitoring
-- **matplotlib** - Plotting and visualization  
+- **matplotlib** - Plotting and visualization
 - **numpy** - Numerical analysis
 - **scipy** - Statistical functions
 
@@ -329,4 +389,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**Quick Start**: `uvx run fdprof --plot python your_script.py` 🚀
+**Quick Start**: `uvx fdprof --plot fdprof-demo` 🚀

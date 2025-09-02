@@ -59,6 +59,7 @@ Documentation = "https://github.com/ianhi/fdprof#readme"
 
 [project.scripts]
 fdprof = "fdprof:cli_main"
+fdprof-demo = "fdprof.demo:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/fdprof"]

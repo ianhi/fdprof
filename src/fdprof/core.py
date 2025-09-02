@@ -13,6 +13,7 @@ In your code, use a log_event function like:
         print(f"EVENT: {time.time():.9f} {message}")
 """
 
+import os
 import subprocess
 import sys
 import time
@@ -90,9 +91,13 @@ def main() -> None:
     print(f"Sampling interval: {interval}s")
     print("-" * 40)
 
-    # Start the process
+    # Start the process with unbuffered output
+    env = os.environ.copy()
+    # Force unbuffered output for Python processes
+    env["PYTHONUNBUFFERED"] = "1"
+
     proc = subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=env
     )
 
     # Get psutil process handle
