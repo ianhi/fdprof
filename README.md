@@ -1,7 +1,7 @@
 # fdprof
 
 [![CI](https://github.com/ianhi/fdprof/actions/workflows/ci.yml/badge.svg)](https://github.com/ianhi/fdprof/actions/workflows/ci.yml)
-[![Pre-commit](https://github.com/ianhi/fdprof/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/ianhi/fdprof/actions/workflows/pre-commit.yml)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ianhi/fdprof/main.svg)](https://results.pre-commit.ci/latest/github/ianhi/fdprof/main)
 [![Build](https://github.com/ianhi/fdprof/actions/workflows/build.yml/badge.svg)](https://github.com/ianhi/fdprof/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
