@@ -8,7 +8,14 @@ from typing import Any, Dict, List
 from .analysis import detect_plateaus
 
 
-def create_plot(log_file: str, events: List[Dict[str, Any]]) -> None:
+def create_plot(
+    log_file: str,
+    events: List[Dict[str, Any]],
+    merge_threshold: float = 5.0,
+    min_length: int = 5,
+    tolerance: float = 2.0,
+    jump_threshold: float = 2.0,
+) -> None:
     """Create and display plot of FD usage with event markers and jump labels."""
     try:
         import matplotlib.pyplot as plt
@@ -48,14 +55,14 @@ def create_plot(log_file: str, events: List[Dict[str, Any]]) -> None:
         )
         y_max = max(fd_counts)
 
-        # Detect plateaus with aggressive merging to combine gradual transitions
+        # Detect plateaus using user-specified parameters
         plateaus = detect_plateaus(
             valid_times,
             fd_counts,
-            min_length=10,  # Require longer stable regions
-            tolerance=3.0,  # Tight tolerance for stability
-            merge_close_levels=True,  # Enable merging
-            merge_threshold=50.0,  # Merge plateaus within 50 FDs of each other
+            min_length=min_length,
+            tolerance=tolerance,
+            merge_close_levels=True,
+            merge_threshold=merge_threshold,
         )
 
         # Draw horizontal lines for each plateau
@@ -80,8 +87,8 @@ def create_plot(log_file: str, events: List[Dict[str, Any]]) -> None:
 
             jump_size = int(next_plateau["level"] - current["level"])
 
-            # Only show significant jumps
-            if abs(jump_size) >= 10:
+            # Only show significant jumps using configurable threshold
+            if abs(jump_size) >= jump_threshold:
                 # Find the transition point between plateaus
                 transition_time = (current["end_time"] + next_plateau["start_time"]) / 2
                 transition_y = (current["level"] + next_plateau["level"]) / 2
