@@ -13,23 +13,56 @@ class TestArgumentParsing:
     def test_parse_args_basic_command(self):
         """Test parsing basic command without options."""
         with patch.object(sys, "argv", ["fdprof", "echo", "hello"]):
-            show_plot, interval, command = parse_args()
+            (
+                show_plot,
+                save_plot,
+                interval,
+                merge_threshold,
+                min_length,
+                tolerance,
+                jump_threshold,
+                command,
+            ) = parse_args()
             assert show_plot is False
+            assert save_plot == ""
             assert interval == 0.1
+            assert merge_threshold == 5.0
+            assert min_length == 5
+            assert tolerance == 2.0
+            assert jump_threshold == 2.0
             assert command == ["echo", "hello"]
 
     def test_parse_args_with_plot_option(self):
         """Test parsing with --plot option."""
         with patch.object(sys, "argv", ["fdprof", "--plot", "python", "script.py"]):
-            show_plot, interval, command = parse_args()
+            (
+                show_plot,
+                save_plot,
+                interval,
+                merge_threshold,
+                min_length,
+                tolerance,
+                jump_threshold,
+                command,
+            ) = parse_args()
             assert show_plot is True
+            assert save_plot == ""
             assert interval == 0.1
             assert command == ["python", "script.py"]
 
     def test_parse_args_with_interval_option(self):
         """Test parsing with --interval option."""
         with patch.object(sys, "argv", ["fdprof", "--interval", "0.5", "sleep", "1"]):
-            show_plot, interval, command = parse_args()
+            (
+                show_plot,
+                save_plot,
+                interval,
+                merge_threshold,
+                min_length,
+                tolerance,
+                jump_threshold,
+                command,
+            ) = parse_args()
             assert show_plot is False
             assert interval == 0.5
             assert command == ["sleep", "1"]
@@ -39,7 +72,16 @@ class TestArgumentParsing:
         with patch.object(
             sys, "argv", ["fdprof", "--plot", "--interval", "0.2", "ls", "-la"]
         ):
-            show_plot, interval, command = parse_args()
+            (
+                show_plot,
+                save_plot,
+                interval,
+                merge_threshold,
+                min_length,
+                tolerance,
+                jump_threshold,
+                command,
+            ) = parse_args()
             assert show_plot is True
             assert interval == 0.2
             assert command == ["ls", "-la"]
@@ -49,7 +91,16 @@ class TestArgumentParsing:
         with patch.object(
             sys, "argv", ["fdprof", "--interval", "0.3", "--plot", "pwd"]
         ):
-            show_plot, interval, command = parse_args()
+            (
+                show_plot,
+                save_plot,
+                interval,
+                merge_threshold,
+                min_length,
+                tolerance,
+                jump_threshold,
+                command,
+            ) = parse_args()
             assert show_plot is True
             assert interval == 0.3
             assert command == ["pwd"]
@@ -103,7 +154,16 @@ class TestArgumentParsing:
         with patch.object(
             sys, "argv", ["fdprof", "python", "-c", 'print("hello world")']
         ):
-            show_plot, interval, command = parse_args()
+            (
+                show_plot,
+                save_plot,
+                interval,
+                merge_threshold,
+                min_length,
+                tolerance,
+                jump_threshold,
+                command,
+            ) = parse_args()
             assert command == ["python", "-c", 'print("hello world")']
 
     def test_parse_args_complex_command(self):
@@ -122,7 +182,16 @@ class TestArgumentParsing:
                 "--verbose",
             ],
         ):
-            show_plot, interval, command = parse_args()
+            (
+                show_plot,
+                save_plot,
+                interval,
+                merge_threshold,
+                min_length,
+                tolerance,
+                jump_threshold,
+                command,
+            ) = parse_args()
             assert show_plot is True
             assert interval == 0.05
             assert command == ["python", "-u", "test.py", "--verbose"]
