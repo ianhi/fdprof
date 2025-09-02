@@ -19,6 +19,7 @@ A powerful file descriptor profiler that monitors FD usage and captures timestam
 ## 🚀 Installation
 
 ### Option 1: uv tool (Recommended)
+
 Install as a persistent tool with uv:
 
 ```bash
@@ -33,11 +34,13 @@ uvx fdprof <command> [args...]
 ```
 
 ### Option 2: pip install
+
 ```bash
 pip install fdprof
 ```
 
 ### Option 3: Development install
+
 ```bash
 git clone https://github.com/ianhi/fdprof
 cd fdprof
@@ -45,6 +48,7 @@ uv sync --extra dev
 ```
 
 ### Verify Installation
+
 ```bash
 # Check if fdprof is installed
 fdprof --help
@@ -122,12 +126,14 @@ fdprof --interval 0.05 --plot fdprof-demo
 ### What the Demo Does
 
 The demo script creates a realistic FD usage pattern with:
+
 - **6 stages** of file operations (3 opening, 3 closing)
 - **Plateaus and jumps** perfect for testing fdprof's analysis
 - **7 timestamped events** for visualization
 - **Automatic cleanup** - no files left behind
 
 **Expected pattern:**
+
 1. Opens 5 files → plateau at +5 FDs
 2. Opens 8 more files → jump to +13 FDs
 3. Opens 6 more files → jump to +19 FDs (peak)
@@ -143,6 +149,7 @@ This creates clear plateaus and jumps that demonstrate fdprof's detection capabi
 *Default sensitivity (merge-threshold=5.0): Shows 5 distinct plateaus with clear jump annotations*
 
 The plot shows:
+
 - **5 distinct plateaus**: Baseline (8 FDs) → Stage 1 (16 FDs) → Stage 2 (22 FDs) → Stage 3 (17 FDs) → Final (9 FDs)
 - **4 labeled jumps**: +8, +6, -5, -8 FDs with red/blue directional arrows
 - **7 event markers**: Timestamped events aligned with plateau transitions
@@ -177,6 +184,7 @@ fdprof --save fdprof_low_sensitivity.png --merge-threshold 50.0 --jump-threshold
 *Single merged plateau - ideal for large applications with noise*
 
 The generated images show:
+
 - **Blue line**: FD usage over time with data points
 - **Gray horizontal lines**: Detected stable plateaus
 - **Red/blue arrows**: Jump annotations with size labels (+8, +6, -5, -8)
@@ -240,6 +248,7 @@ echo "EVENT: $(date +%s.%N) Script completed"
 ## 📊 Understanding the Output
 
 ### Console Output
+
 ```
 Command: fdprof-demo
 Logging to: fdprof.jsonl
@@ -314,6 +323,7 @@ fdprof --plot --merge-threshold 10.0 --jump-threshold 5.0 python manage.py migra
 ```
 
 **Parameter Guide:**
+
 - `--merge-threshold`: Lower = more sensitive to level differences
 - `--jump-threshold`: Lower = show smaller jumps on plot
 - `--tolerance`: Lower = stricter plateau stability requirements
@@ -322,6 +332,7 @@ fdprof --plot --merge-threshold 10.0 --jump-threshold 5.0 python manage.py migra
 ### Analyzing Different Application Types
 
 #### Web Applications
+
 ```bash
 # Monitor Flask development server
 fdprof --plot flask run
@@ -334,6 +345,7 @@ fdprof --interval 0.05 --plot gunicorn -w 4 app:app
 ```
 
 #### Database Operations
+
 ```bash
 # Monitor PostgreSQL dump
 fdprof --plot pg_dump mydb > backup.sql
@@ -343,6 +355,7 @@ fdprof --plot python manage.py migrate --verbosity=2
 ```
 
 #### File Processing
+
 ```bash
 # Monitor large file processing
 fdprof --plot python process_large_files.py
@@ -364,6 +377,7 @@ The plateau detection can be tuned by modifying the source code parameters:
 ### Common Issues
 
 #### "psutil not available" warning
+
 ```bash
 # Install psutil if missing
 pip install psutil
@@ -372,13 +386,17 @@ uvx install --force fdprof
 ```
 
 #### Permission denied on macOS/Linux
+
 Some systems require elevated privileges for FD monitoring:
+
 ```bash
 sudo fdprof --plot python my_script.py
 ```
 
 #### No plot displayed
+
 Ensure matplotlib backend is properly configured:
+
 ```bash
 # Install GUI backend for matplotlib
 pip install matplotlib[gui]
@@ -395,17 +413,20 @@ export MPLBACKEND=TkAgg
 ## 📈 Use Cases
 
 ### Performance Analysis
+
 - **Resource leak detection** - Monitor FD usage patterns to identify leaks
 - **Application profiling** - Understand FD usage during different phases
 - **Load testing** - Track FD consumption under various loads
 
 ### Development & Debugging
+
 - **Database connection pooling** - Verify connection management
 - **File handling** - Monitor file open/close patterns
 - **Network programming** - Track socket lifecycle
 - **Service startup** - Profile initialization sequences
 
 ### Operations & Monitoring
+
 - **Deployment validation** - Ensure services start correctly
 - **Resource monitoring** - Track FD usage in production
 - **Incident analysis** - Analyze FD patterns during outages
@@ -419,6 +440,7 @@ fdprof --plot gunicorn -w 4 myapp:app
 ```
 
 **Key insights:**
+
 - **Initial spike** (0-2s): 15→45 FDs during worker process creation
 - **Stable plateau** (2-10s): 45 FDs during normal operation
 - **Event correlation**: Each "Worker spawned" event matched +8 FD increase
@@ -458,7 +480,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-fdprof was originally developed by [Earthmover](https://earthmover.io/) to profile file descriptor usage in [Icechunk](https://icechunk.io), a new transactional storage engine for scientific data.
+I developed `fdprof` at [Earthmover](https://earthmover.io/) to profile file descriptor usage in [Icechunk](https://icechunk.io), a new transactional storage engine for scientific data.
 
 ## 🙋 Support
 
