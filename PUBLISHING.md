@@ -35,38 +35,31 @@ You must configure trusted publishing on PyPI **before** your first release:
 
 ### 2. Version Management
 
-The workflow validates that your release tag matches the version in `pyproject.toml`:
+fdprof uses **VCS (Version Control System) versioning** which automatically detects the version from your git tags:
 
-- **Version in pyproject.toml**: `version = "0.1.0"`
-- **Release tag**: Should be `v0.1.0` or `0.1.0`
+- **No manual version updates needed** - Version is auto-detected from git tags
+- **Release tag**: `v0.2.0` or `0.2.0` automatically becomes package version `0.2.0`
+- **Development versions**: Commits after a tag get `.dev0+git_hash` suffix
 
 ## Release Process
 
-### Step 1: Update Version
+### Step 1: Ensure Changes are Committed
 
-Update the version in `pyproject.toml`:
-
-```toml
-[project]
-name = "fdprof"
-version = "0.2.0"  # Update this
-```
-
-### Step 2: Commit and Push Changes
+Make sure all your changes are committed and pushed to main:
 
 ```bash
-git add pyproject.toml
-git commit -m "Bump version to 0.2.0"
+git add .
+git commit -m "Your changes"
 git push origin main
 ```
 
-### Step 3: Create a GitHub Release
+### Step 2: Create a GitHub Release
 
 **Option A: Using GitHub Web Interface**
 
 1. Go to https://github.com/ianhi/fdprof/releases
 2. Click "Create a new release"
-3. **Tag**: `v0.2.0` (must match version in pyproject.toml)
+3. **Tag**: `v0.2.0` (this will automatically become the package version)
 4. **Title**: `Release v0.2.0`
 5. **Description**: Add release notes describing changes
 6. For pre-releases: Check "This is a pre-release"

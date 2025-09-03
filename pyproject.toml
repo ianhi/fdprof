@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
 name = "fdprof"
-version = "0.1.0"
+dynamic = ["version"]
 description = "File descriptor profiler that monitors FD usage and captures timestamped events"
 readme = "README.md"
 license = "MIT"
@@ -114,3 +114,9 @@ filterwarnings = [
     "ignore::DeprecationWarning",
     "ignore::PendingDeprecationWarning"
 ]
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/fdprof/_version.py"
