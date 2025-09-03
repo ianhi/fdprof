@@ -5,7 +5,7 @@ on:
     types: [published]
 
 permissions:
-  contents: read
+  contents: write  # Required for uploading release assets
   id-token: write  # Required for trusted publishing
 
 jobs:
@@ -162,6 +162,8 @@ jobs:
     name: Upload release assets
     needs: [build, test-install-ubuntu]
     runs-on: ubuntu-latest
+    # Always run this job to upload assets, even if publishing fails
+    if: always() && needs.build.result == 'success'
     steps:
     - name: Download build artifacts
       uses: actions/download-artifact@v4
@@ -169,8 +171,15 @@ jobs:
         name: python-package-distributions
         path: dist/
 
+    - name: List artifacts to upload
+      run: |
+        echo "📦 Artifacts to upload to GitHub release:"
+        ls -la dist/
+
     - name: Upload wheel and source to GitHub release
       uses: softprops/action-gh-release@v2
       with:
         files: dist/*
         fail_on_unmatched_files: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
