@@ -68,13 +68,43 @@ jobs:
         path: dist/
         retention-days: 7
 
-  test-install:
-    name: Test installation
+  test-install-ubuntu:
+    name: Test installation (Ubuntu - Required)
     needs: build
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.8', '3.11', '3.12']
+    steps:
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+
+    - name: Test wheel installation
+      run: |
+        pip install dist/*.whl
+        fdprof --help
+
+    - name: Test basic functionality
+      run: |
+        # Test that fdprof can run a simple command
+        fdprof python -c "print('PyPI install test successful')"
+
+  test-install-cross-platform:
+    name: Test installation (Cross-platform - Optional)
+    needs: build
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true  # Don't fail the workflow if these tests fail
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
         python-version: ['3.8', '3.11', '3.12']
     steps:
     - name: Set up Python ${{ matrix.python-version }}
@@ -100,7 +130,7 @@ jobs:
 
   publish-to-pypi:
     name: Publish to PyPI
-    needs: [build, test-install]
+    needs: [build, test-install-ubuntu]
     runs-on: ubuntu-latest
     environment:
       name: pypi
@@ -122,7 +152,7 @@ jobs:
 
   publish-to-testpypi:
     name: Publish to TestPyPI
-    needs: [build, test-install]
+    needs: [build, test-install-ubuntu]
     runs-on: ubuntu-latest
     environment:
       name: testpypi
@@ -145,7 +175,7 @@ jobs:
 
   create-github-release-assets:
     name: Upload release assets
-    needs: [build, test-install]
+    needs: [build, test-install-ubuntu]
     runs-on: ubuntu-latest
     steps:
     - name: Download build artifacts

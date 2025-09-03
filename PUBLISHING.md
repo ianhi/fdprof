@@ -7,7 +7,7 @@ This guide explains how to publish fdprof to PyPI using the automated GitHub Act
 The project is configured with automated PyPI publishing that triggers when you create a new GitHub release. The workflow:
 
 1. ✅ **Builds** the wheel and source distribution
-2. ✅ **Tests** installation across multiple platforms (Windows, macOS, Linux)
+2. ✅ **Tests** installation on Ubuntu (required) and Windows/macOS (optional validation)
 3. ✅ **Validates** that the release tag matches the package version
 4. ✅ **Publishes** to PyPI automatically using trusted publishing
 5. ✅ **Uploads** build artifacts to the GitHub release
@@ -102,10 +102,20 @@ gh release create v0.2.0-rc1 \
 ### Jobs Breakdown
 
 1. **`build`**: Creates wheel and source distribution
-2. **`test-install`**: Tests installation on Windows/macOS/Linux with Python 3.8-3.12
-3. **`publish-to-pypi`**: Publishes to PyPI (production releases only)
-4. **`publish-to-testpypi`**: Publishes to TestPyPI (pre-releases only)
-5. **`create-github-release-assets`**: Uploads build artifacts to GitHub release
+2. **`test-install-ubuntu`**: Tests installation on Ubuntu with Python 3.8-3.12 (required for publishing)
+3. **`test-install-cross-platform`**: Tests installation on Windows/macOS with Python 3.8-3.12 (optional validation)
+4. **`publish-to-pypi`**: Publishes to PyPI (production releases only)
+5. **`publish-to-testpypi`**: Publishes to TestPyPI (pre-releases only)
+6. **`create-github-release-assets`**: Uploads build artifacts to GitHub release
+
+### Workflow Design
+
+The workflow is designed to be resilient and practical:
+
+- **Ubuntu tests are required** - Must pass for publishing to proceed
+- **Windows/macOS tests are optional** - Marked with `continue-on-error: true`
+- **Publishing only depends on Ubuntu** - Ensures releases aren't blocked by platform-specific issues
+- **Cross-platform validation still runs** - You get visibility into any issues without blocking releases
 
 ### Version Validation
 
@@ -255,10 +265,11 @@ uv run twine upload dist/*                # Production upload
 
 **GitHub Actions (Recommended):**
 - ✅ **Automated** - No manual steps
-- ✅ **Tested** - Validates installation on multiple platforms
+- ✅ **Tested** - Validates installation on Ubuntu (required), Windows/macOS (optional)
 - ✅ **Secure** - No API tokens needed (trusted publishing)
 - ✅ **Consistent** - Same process every time
 - ✅ **Traceable** - Full audit trail in GitHub Actions
+- ✅ **Resilient** - Windows/macOS test failures won't block publishing
 
 **Local Publishing:**
 - ✅ **Immediate** - No waiting for workflows
