@@ -46,6 +46,13 @@ from .events import parse_events
 from .monitoring import capture_output_and_monitor_fds
 from .plotting import create_plot
 
+# Default configuration constants
+DEFAULT_INTERVAL = 0.1
+DEFAULT_MERGE_THRESHOLD = 5.0
+DEFAULT_MIN_LENGTH = 5
+DEFAULT_TOLERANCE = 2.0
+DEFAULT_JUMP_THRESHOLD = 2.0
+
 
 def parse_args() -> tuple[bool, str, float, float, int, float, float, List[str]]:
     """Parse command line arguments."""
@@ -55,11 +62,11 @@ def parse_args() -> tuple[bool, str, float, float, int, float, float, List[str]]
 
     show_plot = False
     save_plot = ""  # Empty string means don't save, otherwise filename
-    interval = 0.1
-    merge_threshold = 5.0  # Default for demo sensitivity
-    min_length = 5  # Minimum plateau length
-    tolerance = 2.0  # Stability tolerance
-    jump_threshold = 2.0  # Minimum jump size to display
+    interval = DEFAULT_INTERVAL
+    merge_threshold = DEFAULT_MERGE_THRESHOLD
+    min_length = DEFAULT_MIN_LENGTH
+    tolerance = DEFAULT_TOLERANCE
+    jump_threshold = DEFAULT_JUMP_THRESHOLD
     i = 1
 
     # Parse options
@@ -205,8 +212,8 @@ def main() -> None:
     # Get psutil process handle
     try:
         psutil_proc = psutil.Process(proc.pid)
-    except Exception:
-        print("Warning: psutil not available")
+    except (psutil.NoSuchProcess, psutil.AccessDenied, OSError):
+        print("Warning: Could not access process for monitoring")
         psutil_proc = None
 
     start_time = time.time()

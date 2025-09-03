@@ -28,14 +28,18 @@ def create_plot(
     fd_data = []
     try:
         with open(log_file) as f:
-            for line in f:
+            for line_num, line in enumerate(f, 1):
                 if line.strip():
                     try:
                         fd_data.append(json.loads(line))
-                    except json.JSONDecodeError:
+                    except json.JSONDecodeError as e:
+                        print(f"Warning: Invalid JSON on line {line_num}: {e}")
                         continue
     except FileNotFoundError:
         print(f"Log file {log_file} not found")
+        return
+    except OSError as e:
+        print(f"Error reading log file {log_file}: {e}")
         return
 
     if not fd_data:
@@ -189,7 +193,23 @@ def create_plot(
     plt.tight_layout()
 
     if save_filename:
-        plt.savefig(save_filename, dpi=300, bbox_inches="tight")
-        print(f"Plot saved to: {save_filename}")
+        # Validate file extension
+        supported_formats = {".png", ".pdf", ".svg", ".jpg", ".jpeg", ".eps", ".ps"}
+        file_ext = (
+            "." + save_filename.split(".")[-1].lower() if "." in save_filename else ""
+        )
+
+        if file_ext not in supported_formats:
+            print(
+                f"Warning: Unsupported file format '{file_ext}'. Supported: {', '.join(sorted(supported_formats))}"
+            )
+            print("Saving as PNG instead.")
+            save_filename = save_filename.rsplit(".", 1)[0] + ".png"
+
+        try:
+            plt.savefig(save_filename, dpi=300, bbox_inches="tight")
+            print(f"Plot saved to: {save_filename}")
+        except OSError as e:
+            print(f"Error saving plot to {save_filename}: {e}")
     else:
         plt.show()

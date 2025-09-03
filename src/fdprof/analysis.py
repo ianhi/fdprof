@@ -6,6 +6,10 @@ from typing import Any, Dict, List
 
 import numpy as np
 
+# Analysis constants
+SLIDING_WINDOW_SIZE = 5
+MAX_TRANSITION_LENGTH = 20
+
 
 def detect_plateaus(
     times: List[float],
@@ -42,10 +46,12 @@ def detect_plateaus(
         region_times = [times[i]]
 
         # Extend region while values are similar to recent mean
+        recent_mean = values[i]  # Initialize with first value
         while j < len(values):
             # Use a sliding window mean for comparison (more efficient)
-            window_size = min(5, len(region_vals))
-            recent_mean = np.mean(region_vals[-window_size:])
+            window_size = min(SLIDING_WINDOW_SIZE, len(region_vals))
+            if len(region_vals) >= window_size:
+                recent_mean = np.mean(region_vals[-window_size:])
 
             if abs(values[j] - recent_mean) <= tolerance:
                 region_vals.append(values[j])
@@ -87,7 +93,7 @@ def detect_plateaus(
 
             # If there's a transition zone between plateaus
             if (
-                gap_end >= gap_start and gap_end - gap_start < 20
+                gap_end >= gap_start and gap_end - gap_start < MAX_TRANSITION_LENGTH
             ):  # Transition shouldn't be too long
                 # This is likely a transition, not a plateau
                 # Just add the current plateau

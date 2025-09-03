@@ -28,7 +28,9 @@ def _get_fd_counter(psutil_proc: psutil.Process) -> Callable[[], int]:
             return lambda: len(psutil_proc.open_files())
 
 
-def _read_output_thread(pipe, output_queue, stop_event):
+def _read_output_thread(
+    pipe, output_queue: queue.Queue, stop_event: threading.Event
+) -> None:
     """Thread to read output from subprocess pipe."""
     try:
         while not stop_event.is_set():
@@ -100,9 +102,9 @@ def capture_output_and_monitor_fds(
 
                 f.write(json.dumps(fd_data) + "\n")
                 f.flush()
-            except (OSError, json.JSONDecodeError):
-                # IOError/OSError: file write error
-                # JSONDecodeError: shouldn't happen with our data but being explicit
+            except (OSError, json.JSONEncodeError):
+                # OSError: file write error
+                # JSONEncodeError: shouldn't happen with our controlled data
                 pass
 
             # Capture output
