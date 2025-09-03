@@ -12,7 +12,7 @@ class TestCLIIntegration:
     def test_cli_basic_command(self):
         """Test basic CLI command execution."""
         result = subprocess.run(
-            ["uv", "run", "fdprof", "echo", "hello world"],
+            ["uv", "run", "fdprof", "python", "-c", "print('hello world')"],
             capture_output=True,
             text=True,
             timeout=10,
@@ -65,7 +65,16 @@ print("Script finished")
     def test_cli_interval_option(self):
         """Test CLI with custom interval option."""
         result = subprocess.run(
-            ["uv", "run", "fdprof", "--interval", "0.2", "echo", "test"],
+            [
+                "uv",
+                "run",
+                "fdprof",
+                "--interval",
+                "0.2",
+                "python",
+                "-c",
+                "print('test')",
+            ],
             capture_output=True,
             text=True,
             timeout=10,
@@ -81,7 +90,7 @@ print("Script finished")
         log_file.unlink(missing_ok=True)
 
         result = subprocess.run(
-            ["uv", "run", "fdprof", "sleep", "0.2"],
+            ["uv", "run", "fdprof", "python", "-c", "import time; time.sleep(0.2)"],
             capture_output=True,
             text=True,
             timeout=10,
@@ -145,7 +154,16 @@ print("Script finished")
         """Test CLI with invalid interval values."""
         # Negative interval
         result = subprocess.run(
-            ["uv", "run", "fdprof", "--interval", "-0.1", "echo", "test"],
+            [
+                "uv",
+                "run",
+                "fdprof",
+                "--interval",
+                "-0.1",
+                "python",
+                "-c",
+                "print('test')",
+            ],
             capture_output=True,
             text=True,
             timeout=10,
@@ -154,7 +172,16 @@ print("Script finished")
 
         # Non-numeric interval
         result = subprocess.run(
-            ["uv", "run", "fdprof", "--interval", "abc", "echo", "test"],
+            [
+                "uv",
+                "run",
+                "fdprof",
+                "--interval",
+                "abc",
+                "python",
+                "-c",
+                "print('test')",
+            ],
             capture_output=True,
             text=True,
             timeout=10,
