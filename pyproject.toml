@@ -9,7 +9,7 @@ description = "File descriptor profiler that monitors FD usage and captures time
 readme = "README.md"
 license = "MIT"
 authors = [
-    { name = "Your Name", email = "your.email@example.com" },
+    { name = "Ian Hunt-Isaak", email = "ianhuntisaak@gmail.com" },
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -49,6 +49,7 @@ dev = [
     "pytest-timeout>=2.0",
     "ruff>=0.1.0",
     "pre-commit>=3.0.0",
+    "twine>=4.0.0",
 ]
 
 [project.urls]
