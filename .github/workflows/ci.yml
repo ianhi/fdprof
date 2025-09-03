@@ -43,7 +43,9 @@ jobs:
         file: ./coverage.xml
         fail_ci_if_error: false
 
-    - name: Test CLI functionality
+    - name: Test CLI functionality (Unix)
+      if: matrix.os != 'windows-latest'
+      shell: bash
       run: |
         # Test basic help
         uv run fdprof --help
@@ -53,6 +55,27 @@ jobs:
         uv run fdprof --save test_plot.png echo "CI plot test" || true
         ls -la test_plot.png || echo "Plot not generated (expected in CI)"
 
-    - name: Clean up artifacts
+    - name: Test CLI functionality (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: pwsh
+      run: |
+        # Test basic help
+        uv run fdprof --help
+        # Test demo (basic smoke test) - no timeout on Windows
+        uv run fdprof echo "CI test"
+        # Test save functionality
+        uv run fdprof --save test_plot.png echo "CI plot test"
+        if (Test-Path test_plot.png) { Get-Item test_plot.png } else { Write-Output "Plot not generated (expected in CI)" }
+
+    - name: Clean up artifacts (Unix)
+      if: matrix.os != 'windows-latest'
+      shell: bash
       run: |
         rm -f fdprof.jsonl test_plot.png
+
+    - name: Clean up artifacts (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: pwsh
+      run: |
+        Remove-Item -Path "fdprof.jsonl" -ErrorAction SilentlyContinue
+        Remove-Item -Path "test_plot.png" -ErrorAction SilentlyContinue

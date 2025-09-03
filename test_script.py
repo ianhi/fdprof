@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import os
+import tempfile
 import time
 
 
@@ -11,8 +13,10 @@ log_event("Test script started")
 
 # Open some files to increase FD usage
 files = []
+temp_dir = tempfile.gettempdir()
 for i in range(5):
-    f = open(f"/tmp/test_file_{i}.txt", "w")
+    temp_path = os.path.join(temp_dir, f"test_file_{i}.txt")
+    f = open(temp_path, "w")
     files.append(f)
     f.write(f"Test content {i}")
     log_event(f"Opened file {i}")

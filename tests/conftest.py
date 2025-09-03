@@ -77,6 +77,8 @@ def test_script():
     script_content = """#!/usr/bin/env python3
 import time
 import sys
+import tempfile
+import os
 
 def log_event(message: str):
     print(f"EVENT: {time.time():.9f} {message}")
@@ -86,9 +88,11 @@ log_event("Script initialized")
 
 # Create some file descriptors
 files = []
+temp_dir = tempfile.gettempdir()
 for i in range(3):
     try:
-        f = open(f"/tmp/fdprof_test_script_{i}.txt", "w")
+        temp_path = os.path.join(temp_dir, f"fdprof_test_script_{i}.txt")
+        f = open(temp_path, "w")
         files.append(f)
         f.write(f"Test data {i}")
         log_event(f"Created file {i}")
@@ -118,8 +122,10 @@ print("Test script finished")
     # Clean up
     Path(script_path).unlink(missing_ok=True)
     # Clean up any test files created by the script
+    temp_dir = tempfile.gettempdir()
     for i in range(3):
-        Path(f"/tmp/fdprof_test_script_{i}.txt").unlink(missing_ok=True)
+        temp_path = Path(temp_dir) / f"fdprof_test_script_{i}.txt"
+        temp_path.unlink(missing_ok=True)
 
 
 @pytest.fixture

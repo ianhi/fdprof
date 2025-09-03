@@ -241,5 +241,7 @@ print("FD test completed")
         finally:
             Path(script_path).unlink(missing_ok=True)
             # Clean up test files
+            temp_dir = tempfile.gettempdir()
             for i in range(3):
-                Path(f"/tmp/fdprof_test_{i}.txt").unlink(missing_ok=True)
+                temp_path = Path(temp_dir) / f"fdprof_test_{i}.txt"
+                temp_path.unlink(missing_ok=True)
