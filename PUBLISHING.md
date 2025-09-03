@@ -95,8 +95,8 @@ gh release create v0.2.0-rc1 \
 ### Jobs Breakdown
 
 1. **`build`**: Creates wheel and source distribution
-2. **`test-install-ubuntu`**: Tests installation on Ubuntu with Python 3.8-3.12 (required for publishing)
-3. **`test-install-cross-platform`**: Tests installation on Windows/macOS with Python 3.8-3.12 (optional validation)
+2. **`test-install-ubuntu`**: Tests installation on Ubuntu with Python 3.11-3.12 (required for publishing)
+3. **`test-install-cross-platform`**: Tests installation on Windows/macOS with Python 3.11-3.12 (optional validation)
 4. **`publish-to-pypi`**: Publishes to PyPI (production releases only)
 5. **`publish-to-testpypi`**: Publishes to TestPyPI (pre-releases only)
 6. **`create-github-release-assets`**: Uploads build artifacts to GitHub release
