@@ -28,12 +28,17 @@ Install as a persistent tool with uv:
 ```bash
 # Install from PyPI (when published)
 uv tool install fdprof
+# With GUI support for interactive plots
+uv tool install "fdprof[gui]"
 
 # Install from GitHub repository
 uv tool install git+https://github.com/ianhi/fdprof
 
-# Run without installing (temporary)
+# Run without installing (basic - may need --save on Linux without GUI)
 uvx fdprof <command> [args...]
+
+# Run with GUI support for interactive plots (recommended for Linux)
+uvx --with "fdprof[gui]" fdprof --plot <command>
 ```
 
 ### Option 2: pip install
@@ -687,4 +692,4 @@ I developed `fdprof` at [Earthmover](https://earthmover.io/) to profile file des
 
 ---
 
-**Quick Start**: `uvx fdprof --plot fdprof-demo` 🚀
+**Quick Start**: `uvx --with "fdprof[gui]" fdprof --plot fdprof-demo` 🚀
