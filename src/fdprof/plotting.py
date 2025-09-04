@@ -18,6 +18,29 @@ def create_plot(
     save_filename: str = "",
 ) -> None:
     """Create and display plot of FD usage with event markers and jump labels."""
+    # Configure matplotlib backend before importing pyplot
+    import sys
+
+    import matplotlib
+
+    # If saving to file, use non-interactive backend
+    if save_filename:
+        matplotlib.use("Agg")  # Non-interactive backend for file output
+    else:
+        # Try to use an interactive backend
+        # Check available backends and try to select the best one
+        gui_backends = ["QtAgg", "Qt5Agg", "TkAgg", "GTKAgg", "WXAgg"]
+        current_backend = matplotlib.get_backend()
+
+        # Only try to switch if we're on a non-interactive backend
+        if current_backend == "Agg" or "nbagg" in current_backend.lower():
+            for backend in gui_backends:
+                try:
+                    matplotlib.use(backend)
+                    break
+                except (ImportError, ValueError):
+                    continue
+
     try:
         import matplotlib.pyplot as plt
     except ImportError:
@@ -212,4 +235,20 @@ def create_plot(
         except OSError as e:
             print(f"Error saving plot to {save_filename}: {e}")
     else:
-        plt.show()
+        try:
+            plt.show()
+        except Exception as e:
+            # Fallback if interactive mode fails
+            import matplotlib
+
+            backend = matplotlib.get_backend()
+            if backend == "Agg" or "nbagg" in backend.lower():
+                print(f"\nWarning: No interactive backend available (using {backend}).")
+                print("To view plots interactively, install a GUI backend:")
+                print("  pip install fdprof[gui]     # For Qt6 backend (recommended)")
+                print("  apt install python3-tk      # For Tk backend (Linux/Debian)")
+                print("  brew install python-tk      # For Tk backend (macOS)")
+                print("\nAlternatively, save the plot to a file:")
+                print(f"  fdprof --save output.png {' '.join(sys.argv[1:])}")
+            else:
+                print(f"Error displaying plot: {e}")

@@ -39,7 +39,19 @@ uvx fdprof <command> [args...]
 ### Option 2: pip install
 
 ```bash
+# Basic installation
 pip install fdprof
+
+# With GUI support for interactive plots (recommended for Linux users)
+pip install "fdprof[gui]"  # Installs PyQt6 backend
+
+# Alternative: Use system Tk (lighter weight)
+# On Debian/Ubuntu:
+sudo apt install python3-tk
+# On macOS:
+brew install python-tk
+# On RHEL/Fedora:
+sudo dnf install python3-tkinter
 ```
 
 ### Option 3: Development install
@@ -535,15 +547,26 @@ Some systems require elevated privileges for FD monitoring:
 sudo fdprof --plot python my_script.py
 ```
 
-#### No plot displayed
+#### No plot displayed / "FigureCanvasAgg is non-interactive" warning
 
-Ensure matplotlib backend is properly configured:
+This happens when no interactive matplotlib backend is available (common on Linux servers or containers). Solutions:
 
 ```bash
-# Install GUI backend for matplotlib
-pip install matplotlib[gui]
-# or try different backend
-export MPLBACKEND=TkAgg
+# Option 1: Install fdprof with GUI support (recommended)
+pip install "fdprof[gui]"  # Installs PyQt6 backend
+
+# Option 2: Install system Tk backend
+# On Debian/Ubuntu:
+sudo apt install python3-tk
+# On RHEL/Fedora:
+sudo dnf install python3-tkinter
+
+# Option 3: Save plot to file instead of displaying
+fdprof --save output.png <command>
+
+# Option 4: Set matplotlib backend manually
+export MPLBACKEND=TkAgg  # or Qt5Agg, GTKAgg
+fdprof --plot <command>
 ```
 
 ### Platform-Specific Notes

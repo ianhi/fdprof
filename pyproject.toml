@@ -35,6 +35,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+gui = [
+    "PyQt6>=6.0.0",  # Qt backend for matplotlib (most reliable cross-platform)
+]
+gui-tk = [
+    "tk>=0.1.0",  # Tkinter backend (lighter weight alternative)
+]
 test = [
     "pytest>=6.0",
     "pytest-cov>=3.0",
