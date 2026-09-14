@@ -1,6 +1,7 @@
 """Tests for analysis and plateau detection functionality."""
 
 import numpy as np
+
 from fdprof.analysis import detect_plateaus
 
 
