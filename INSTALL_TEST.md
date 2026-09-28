@@ -107,8 +107,10 @@ import time
 import tempfile
 import os
 
+
 def log_event(message):
     print(f"EVENT: {time.time():.9f} {message}")
+
 
 def test_fdprof():
     print("Testing fdprof functionality...")
@@ -117,7 +119,7 @@ def test_fdprof():
     # Open some file descriptors
     files = []
     for i in range(3):
-        f = tempfile.NamedTemporaryFile(mode='w', delete=False)
+        f = tempfile.NamedTemporaryFile(mode="w", delete=False)
         f.write(f"Test data {i}")
         f.flush()
         files.append(f)
@@ -134,6 +136,7 @@ def test_fdprof():
 
     log_event("Test script completed")
     print("Test script finished successfully!")
+
 
 if __name__ == "__main__":
     test_fdprof()
