@@ -255,9 +255,11 @@ Add event logging to your applications to track important milestones:
 ```python
 import time
 
+
 def log_event(message: str):
     """Log a timestamped event that fdprof will capture"""
     print(f"EVENT: {time.time():.9f} {message}")
+
 
 # Example application with events
 log_event("Application startup")
@@ -267,7 +269,7 @@ db_connections = []
 for i in range(5):
     conn = create_db_connection()
     db_connections.append(conn)
-    log_event(f"Database connection {i+1} established")
+    log_event(f"Database connection {i + 1} established")
 
 log_event("All connections ready")
 
@@ -305,6 +307,7 @@ echo "EVENT: $(date +%s.%N) Script completed"
 **Python:**
 ```python
 import time
+
 timestamp = time.time()  # Returns float with microsecond precision
 print(f"EVENT: {timestamp:.9f} My event message")
 ```
@@ -380,7 +383,11 @@ println!("EVENT: {} Database ready", std::time::SystemTime::now()
 ```python
 # Add this to the top of your Python script
 import time
-def log_event(msg): print(f"EVENT: {time.time():.9f} {msg}", flush=True)
+
+
+def log_event(msg):
+    print(f"EVENT: {time.time():.9f} {msg}", flush=True)
+
 
 # Then use throughout your application:
 log_event("Starting application")
