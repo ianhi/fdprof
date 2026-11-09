@@ -4,6 +4,7 @@ import sys
 from unittest.mock import patch
 
 import pytest
+
 from fdprof.core import parse_args, print_summary
 
 
