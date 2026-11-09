@@ -64,6 +64,7 @@ These would violate our mission:
 def my_function():
     pass
 
+
 # DON'T: Context managers
 with fdprof.monitoring():
     do_work()
