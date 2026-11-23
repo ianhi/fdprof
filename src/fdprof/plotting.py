@@ -168,7 +168,7 @@ def create_plot(
             print(f"\nDetected {len(plateaus)} stable plateaus:")
             for i, plateau in enumerate(plateaus):
                 print(
-                    f"  Plateau {i+1}: {plateau['level']:.0f} FDs from {plateau['start_time']:.2f}s to {plateau['end_time']:.2f}s"
+                    f"  Plateau {i + 1}: {plateau['level']:.0f} FDs from {plateau['start_time']:.2f}s to {plateau['end_time']:.2f}s"
                 )
 
         if jumps:
